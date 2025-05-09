@@ -1,59 +1,57 @@
 'use client';
 
+import { useState } from 'react';
 import styles from './page.module.css';
+//テスト
+const down = (n: number) => {
+  if (n === 0) return;
+  console.log(n);
+  down(n - 1);
+};
+down(10);
 
+//その数までの和
+const sum1 = (i: number): number => {
+  if (i === 0) return 0;
+  return sum1(i - 1) + i;
+};
+
+//両端含む間の和
+const sum2 = (first: number, last: number) => {
+  return sum1(last) - sum1(first - 1);
+};
+
+const sum3 = (a: number, b: number) => ((a + b) * (b - a + 1)) / 2;
+
+console.log(sum1(10));
+console.log(sum2(4, 10));
+console.log(sum3(4, 10));
+
+const calcTotal = (array: number[], counter: number) => {
+  let ans: number = 0;
+  for (let i = 0; i < array.length; i++) {
+    ans += array[i];
+  }
+  return ans + counter;
+};
 export default function Home() {
+  const [numbers, setnumbers] = useState([0, 0, 0, 0, 0]);
+  const [sampleCounter, setsampleCounter] = useState(0);
+  console.log(numbers);
+  const total = calcTotal(numbers, sampleCounter);
+  console.log(total);
+  const clickHandler = () => {
+    setsampleCounter((sampleCounter + 1) % 14);
+    const newnumbers = structuredClone(numbers);
+    newnumbers[sampleCounter % 5] += 1;
+    setnumbers(newnumbers);
+  };
+  console.log(sampleCounter);
+
   return (
     <div className={styles.container}>
-      <main className={styles.main}>
-        <h1 className={styles.title}>
-          Welcome to <a href="https://nextjs.org">Next.js!</a>
-        </h1>
-
-        <p className={styles.description}>
-          Get started by editing{' '}
-          <code className={styles.code} style={{ backgroundColor: '#fafafa' }}>
-            src/app/page.tsx
-          </code>
-        </p>
-
-        <div className={styles.grid}>
-          <a className={styles.card} href="https://nextjs.org/docs">
-            <h2>Documentation &rarr;</h2>
-            <p>Find in-depth information about Next.js features and API.</p>
-          </a>
-
-          <a className={styles.card} href="https://nextjs.org/learn">
-            <h2>Learn &rarr;</h2>
-            <p>Learn about Next.js in an interactive course with quizzes!</p>
-          </a>
-
-          <a className={styles.card} href="https://github.com/vercel/next.js/tree/master/examples">
-            <h2>Examples &rarr;</h2>
-            <p>Discover and deploy boilerplate example Next.js projects.</p>
-          </a>
-
-          <a
-            className={styles.card}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          >
-            <h2>Deploy &rarr;</h2>
-            <p>Instantly deploy your Next.js site to a public URL with Vercel.</p>
-          </a>
-        </div>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Powered by{' '}
-          <span className={styles.logo}>
-            <img src="vercel.svg" alt="Vercel Logo" width={72} height={16} />
-          </span>
-        </a>
-      </footer>
+      <div className={styles.sampleCell} style={{ backgroundPosition: sampleCounter * -30 }} />
+      <button onClick={() => clickHandler()}>クリック</button>
     </div>
   );
 }
