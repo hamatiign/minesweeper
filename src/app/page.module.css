@@ -8,7 +8,20 @@
   padding: 0 0.5rem;
 }
 
-.sampleCell {
+.board {
+  display: flex;
+  flex-wrap: wrap;
+
+  /* align-items: center;
+  justify-content: center; */
+  width: 240px;
+  height: 240px;
+}
+
+.cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   width: 30px;
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
