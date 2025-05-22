@@ -17,11 +17,21 @@ const getRandomValue = (boardlength: number): number => {
   return Math.floor(Math.random() * boardlength);
 };
 
-//TODO  後でstateやコンテキストでレベル別で出来るようにする
+//後でstateやコンテキストでレベル別で出来るようにする
 const bombnum = 10;
 const boardlength = 8;
 
 export default function Home() {
+  const directions = [
+    [1, 1],
+    [1, 0],
+    [1, -1],
+    [0, 1],
+    [0, -1],
+    [-1, 1],
+    [-1, 0],
+    [-1, -1],
+  ];
   const [userInput, setuserInput] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -44,23 +54,23 @@ export default function Home() {
   ]);
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
+  const board = [[]];
   //========================================~~~~~~~~~~~~~==
 
   const clickHandler = (x: number, y: number) => {
     //初チェック時の爆弾生成
-    if (!newuserInput.some((row) => row.some((num) => num === 1))) {
-      for (let i = 0; i < bombnum; i++) {
-        const bom_x = getRandomValue(boardlength);
-        const bom_y = getRandomValue(boardlength);
-        if (bom_x === x && bom_y === y) {
-          i--;
-          continue;
-        }
-        newbombMap[bom_x][bom_y] = 1;
-      }
+    while (
+      newbombMap.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 1).length, 0) <
+      bombnum
+    ) {
+      const bom_x = getRandomValue(boardlength);
+      const bom_y = getRandomValue(boardlength);
+      if (bom_x === x && bom_y === y) continue;
+      newbombMap[bom_x][bom_y] = 1;
     }
 
     console.log(newbombMap);
+    newuserInput[y][x] += 1;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
   };
@@ -68,7 +78,7 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.board}>
-        {userInput.map((row, y) =>
+        {board.map((row, y) =>
           row.map((column, x) => (
             <div key={`${x}-${y}`} onClick={() => clickHandler(x, y)} className={styles.cell} />
           )),
