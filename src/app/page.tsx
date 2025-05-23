@@ -33,7 +33,7 @@ export default function Home() {
     [-1, -1],
   ];
   const [userInput, setuserInput] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 2, 3, 4, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -54,7 +54,8 @@ export default function Home() {
   ]);
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
-  const board = [[]];
+  const board = newuserInput;
+  console.log('board', board);
   //========================================~~~~~~~~~~~~~==
 
   const clickHandler = (x: number, y: number) => {
@@ -69,8 +70,11 @@ export default function Home() {
       newbombMap[bom_x][bom_y] = 1;
     }
 
-    console.log(newbombMap);
-    newuserInput[y][x] += 1;
+    for (let i = 0; i < boardlength; i++)
+      for (let j = 0; j < boardlength; j++) if (newbombMap[i][j] === 1) board[i][j] = 4;
+
+    console.log('newbommap', newbombMap);
+    newuserInput[y][x] === 1;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
   };
@@ -79,8 +83,14 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.board}>
         {board.map((row, y) =>
-          row.map((column, x) => (
-            <div key={`${x}-${y}`} onClick={() => clickHandler(x, y)} className={styles.cell} />
+          row.map((boardnum, x) => (
+            <div key={`${x}-${y}`} onClick={() => clickHandler(x, y)} className={styles.cell}>
+              {boardnum === 0 && <div className={styles.covered} />}
+              {boardnum === 1 && <div className={styles.opened} />}
+              {boardnum === 2 && <div className={styles.flag} />}
+              {boardnum === 3 && <div className={styles.question} />}
+              {boardnum === 4 && <div className={styles.bom} />}
+            </div>
           )),
         )}
       </div>

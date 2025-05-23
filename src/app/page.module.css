@@ -24,6 +24,42 @@
   justify-content: center;
   width: 30px;
   height: 30px;
+}
+
+.covered {
+  width: 30px;
+  height: 30px;
+  background-color: gray;
+}
+
+.bom {
+  width: 30px;
+  height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
+  background-position: -300px;
+  border: 1px solid black;
+}
+
+.opened {
+  width: 30px;
+  height: 30px;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-position: -30px;
+  border: 1px solid black;
+}
+
+.flag {
+  width: 30px;
+  height: 30px;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-position: -270px;
+  border: 1px solid black;
+}
+
+.question {
+  width: 30px;
+  height: 30px;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-position: -240px;
   border: 1px solid black;
 }
