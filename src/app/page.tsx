@@ -84,12 +84,18 @@ export default function Home() {
       <div className={styles.board}>
         {board.map((row, y) =>
           row.map((boardnum, x) => (
-            <div key={`${x}-${y}`} onClick={() => clickHandler(x, y)} className={styles.cell}>
+            <div
+              key={`${x}-${y}`}
+              onClick={() => clickHandler(x, y)}
+              className={styles.cell}
+              style={{ backgroundPosition: boardnum === 1 ? -30 : -30 * (6 + boardnum) }}
+            >
               {boardnum === 0 && <div className={styles.covered} />}
+              {/* {boardnum === 0 && <div className={styles.covered} />}
               {boardnum === 1 && <div className={styles.opened} />}
-              {boardnum === 2 && <div className={styles.flag} />}
-              {boardnum === 3 && <div className={styles.question} />}
-              {boardnum === 4 && <div className={styles.bom} />}
+              {boardnum === 2 && <div className={styles.question} />}
+              {boardnum === 3 && <div className={styles.flag} />}
+              {boardnum === 4 && <div className={styles.bom} />} */}
             </div>
           )),
         )}
