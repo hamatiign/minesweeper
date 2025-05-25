@@ -30,15 +30,13 @@
 .covered {
   width: 30px;
   height: 30px;
-  background-color: gray;
+  background-color: dimgray;
 }
 
-.bom {
+.empty {
   width: 30px;
   height: 30px;
-  background: url('~/src/assets/images/icons.png') no-repeat;
-  background-position: -300px;
-  border: 1px solid black;
+  background-color: gray;
 }
 
 .opened {
@@ -46,6 +44,15 @@
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-position: -30px;
+  border: 1px solid black;
+}
+
+/*
+.question {
+  width: 30px;
+  height: 30px;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-position: -240px;
   border: 1px solid black;
 }
 
@@ -57,10 +64,10 @@
   border: 1px solid black;
 }
 
-.question {
+.bom {
   width: 30px;
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
-  background-position: -240px;
+  background-position: -300px;
   border: 1px solid black;
-}
+} */

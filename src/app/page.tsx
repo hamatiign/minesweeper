@@ -11,7 +11,15 @@ const calcTotal = (array: number[], counter: number) => {
   }
   return ans + counter;
 };
-
+const countArroundBomb = (y: number, x: number, directions: number[][], bombMap: number[][]) => {
+  let arroundBombNum = 0;
+  for (let i = 0; i < directions.length; i++) {
+    if (bombMap[y + directions[i][1]] === undefined) continue;
+    if (bombMap[y + directions[i][1]][x + directions[i][0]] === undefined) continue;
+    if (bombMap[y + directions[i][1]][x + directions[i][0]] === 1) arroundBombNum++;
+  }
+  return arroundBombNum;
+};
 //ボム生成用の乱数  添え字を返す
 const getRandomValue = (boardlength: number): number => {
   return Math.floor(Math.random() * boardlength);
@@ -33,7 +41,7 @@ export default function Home() {
     [-1, -1],
   ];
   const [userInput, setuserInput] = useState([
-    [0, 2, 3, 4, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
@@ -54,8 +62,7 @@ export default function Home() {
   ]);
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
-  const board = newuserInput;
-  console.log('board', board);
+  let board = newuserInput;
   //========================================~~~~~~~~~~~~~==
 
   const clickHandler = (x: number, y: number) => {
@@ -71,10 +78,17 @@ export default function Home() {
     }
 
     for (let i = 0; i < boardlength; i++)
-      for (let j = 0; j < boardlength; j++) if (newbombMap[i][j] === 1) board[i][j] = 4;
+      for (let j = 0; j < boardlength; j++)
+        if (newbombMap[i][j] === 1) {
+          board[i][j] = 4;
+        }
+
+    newuserInput[y][x] = 1;
 
     console.log('newbommap', newbombMap);
-    newuserInput[y][x] === 1;
+    console.log('newuserInput', newuserInput);
+    console.log('board', board);
+    board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
   };
@@ -88,8 +102,17 @@ export default function Home() {
               key={`${x}-${y}`}
               onClick={() => clickHandler(x, y)}
               className={styles.cell}
-              style={{ backgroundPosition: boardnum === 1 ? -30 : -30 * (6 + boardnum) }}
+              style={{
+                backgroundPosition:
+                  boardnum === 1
+                    ? -30 * (1 - countArroundBomb(y, x, directions, newbombMap))
+                    : -30 * (6 + boardnum),
+              }}
+              //参考 style={boardnum === 1 ? { backgroundColor: "lightblue" } : {}}
             >
+              {boardnum === 1 && countArroundBomb(y, x, directions, bombMap) === 0 && (
+                <div className={styles.empty} />
+              )}
               {boardnum === 0 && <div className={styles.covered} />}
               {/* {boardnum === 0 && <div className={styles.covered} />}
               {boardnum === 1 && <div className={styles.opened} />}
