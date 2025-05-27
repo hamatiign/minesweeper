@@ -8,14 +8,24 @@
   padding: 0 0.5rem;
 }
 
+.backgroundboard {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 320px;
+  height: 400px;
+  background-color: dimgray;
+  border: 2px solid;
+  border-color: lightgray darkslategray darkslategray lightgray;
+}
+
 .board {
   display: flex;
   flex-wrap: wrap;
-
-  /* align-items: center;
-  justify-content: center; */
   width: 240px;
   height: 240px;
+  outline: 4px solid darkslategray;
 }
 
 .cell {
@@ -25,24 +35,28 @@
   width: 30px;
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: dimgray;
 }
 
 .covered {
   width: 30px;
   height: 30px;
-  background-color: dimgray;
+  background-color: gray;
+  border: 2px solid;
+  border-color: lightgray darkslategray darkslategray lightgray;
 }
 
 .empty {
   width: 30px;
   height: 30px;
-  background-color: gray;
+  background-color: dimgray;
 }
 
 .opened {
   width: 30px;
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: dimgray;
   background-position: -30px;
   border: 1px solid black;
 }

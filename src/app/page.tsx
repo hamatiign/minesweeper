@@ -119,33 +119,35 @@ export default function Home() {
   //=========================================================
   return (
     <div className={styles.container}>
-      <div className={styles.board}>
-        {board.map((row, y) =>
-          row.map((boardnum, x) => (
-            <div
-              key={`${x}-${y}`}
-              onClick={() => clickHandler(x, y)}
-              className={styles.cell}
-              style={{
-                backgroundPosition:
-                  boardnum === 1
-                    ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
-                    : -30 * (6 + boardnum),
-              }}
-              //参考 style={boardnum === 1 ? { backgroundColor: "lightblue" } : {}}
-            >
-              {boardnum === 1 && countArroundBomb(y, x, directions, bombMap) === 0 && (
-                <div className={styles.empty} />
-              )}
-              {boardnum === 0 && <div className={styles.covered} />}
-              {/* {boardnum === 0 && <div className={styles.covered} />}
+      <div className={styles.backgroundboard}>
+        <div className={styles.board}>
+          {board.map((row, y) =>
+            row.map((boardnum, x) => (
+              <div
+                key={`${x}-${y}`}
+                onClick={() => clickHandler(x, y)}
+                className={styles.cell}
+                style={{
+                  backgroundPosition:
+                    boardnum === 1
+                      ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
+                      : -30 * (6 + boardnum),
+                }}
+                //参考 style={boardnum === 1 ? { backgroundColor: "lightblue" } : {}}
+              >
+                {boardnum === 1 && countArroundBomb(y, x, directions, bombMap) === 0 && (
+                  <div className={styles.empty} />
+                )}
+                {boardnum === 0 && <div className={styles.covered} />}
+                {/* {boardnum === 0 && <div className={styles.covered} />}
               {boardnum === 1 && <div className={styles.opened} />}
               {boardnum === 2 && <div className={styles.question} />}
               {boardnum === 3 && <div className={styles.flag} />}
               {boardnum === 4 && <div className={styles.bom} />} */}
-            </div>
-          )),
-        )}
+              </div>
+            )),
+          )}
+        </div>
       </div>
     </div>
   );
