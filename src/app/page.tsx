@@ -3,6 +3,10 @@
 import { useState } from 'react';
 import styles from './page.module.css';
 
+//後でstateやコンテキストでレベル別で出来るようにする
+const bombnum = 10;
+const boardlength: number = 8;
+
 //今のところ関係ない
 const calcTotal = (array: number[], counter: number) => {
   let ans: number = 0;
@@ -11,6 +15,7 @@ const calcTotal = (array: number[], counter: number) => {
   }
   return ans + counter;
 };
+//周囲のボム数えて返す
 const countArroundBomb = (y: number, x: number, directions: number[][], bombMap: number[][]) => {
   let arroundBombNum = 0;
   for (let i = 0; i < directions.length; i++) {
@@ -24,10 +29,27 @@ const countArroundBomb = (y: number, x: number, directions: number[][], bombMap:
 const getRandomValue = (boardlength: number): number => {
   return Math.floor(Math.random() * boardlength);
 };
+//二次元配列同氏の足し算
+function addMatrices(a: number[][], b: number[][]): number[][] {
+  return a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
+}
 
-//後でstateやコンテキストでレベル別で出来るようにする
-const bombnum = 10;
-const boardlength = 8;
+//空白連鎖の再起関数  値を直接いじらないようにしたい
+const do_empty_chain = (
+  y: number,
+  x: number,
+  directions: number[][],
+  newbombMap: number[][],
+  userInput: number[][],
+) => {
+  if (userInput[y] === undefined) return;
+  if (userInput[y][x] === undefined) return;
+  if (userInput[y][x] === 1) return;
+  userInput[y][x] = 1;
+  if (countArroundBomb(y, x, directions, newbombMap) > 0) return;
+  for (let i = 0; i < 8; i++)
+    do_empty_chain(y + directions[i][1], x + directions[i][0], directions, newbombMap, userInput);
+};
 
 export default function Home() {
   const directions = [
@@ -83,11 +105,13 @@ export default function Home() {
           board[i][j] = 4;
         }
 
-    newuserInput[y][x] = 1;
+    do_empty_chain(y, x, directions, newbombMap, newuserInput);
+    // newuserInput[y][x] = 1;
 
     console.log('newbommap', newbombMap);
     console.log('newuserInput', newuserInput);
     console.log('board', board);
+    // console.log('reccount', rec_count);
     board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
@@ -105,7 +129,7 @@ export default function Home() {
               style={{
                 backgroundPosition:
                   boardnum === 1
-                    ? -30 * (1 - countArroundBomb(y, x, directions, newbombMap))
+                    ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
                     : -30 * (6 + boardnum),
               }}
               //参考 style={boardnum === 1 ? { backgroundColor: "lightblue" } : {}}
