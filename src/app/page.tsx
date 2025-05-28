@@ -45,6 +45,7 @@ const do_empty_chain = (
   if (userInput[y] === undefined) return;
   if (userInput[y][x] === undefined) return;
   if (userInput[y][x] === 1) return;
+  if (newbombMap[y][x] === 1) return;
   userInput[y][x] = 1;
   if (countArroundBomb(y, x, directions, newbombMap) > 0) return;
   for (let i = 0; i < 8; i++)
@@ -85,6 +86,7 @@ export default function Home() {
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
   let board = newuserInput;
+  let gameover = false;
   //========================================~~~~~~~~~~~~~==
 
   const clickHandler = (x: number, y: number) => {
@@ -96,14 +98,22 @@ export default function Home() {
       const bom_x = getRandomValue(boardlength);
       const bom_y = getRandomValue(boardlength);
       if (bom_x === x && bom_y === y) continue;
-      newbombMap[bom_x][bom_y] = 1;
+      newbombMap[bom_y][bom_x] = 1;
     }
 
-    for (let i = 0; i < boardlength; i++)
-      for (let j = 0; j < boardlength; j++)
-        if (newbombMap[i][j] === 1) {
-          board[i][j] = 4;
-        }
+    //gameover判定
+    if (newbombMap[y][x] === 1) gameover = true;
+
+    //gameoverでboardに爆弾を適応
+    if (gameover) {
+      for (let i = 0; i < boardlength; i++)
+        for (let j = 0; j < boardlength; j++)
+          if (newbombMap[i][j] === 1) {
+            board[i][j] = 4;
+          }
+      newuserInput[y][x] = 1;
+      alert('gameover');
+    }
 
     do_empty_chain(y, x, directions, newbombMap, newuserInput);
     // newuserInput[y][x] = 1;
@@ -133,17 +143,45 @@ export default function Home() {
                 onClick={() => clickHandler(x, y)}
                 className={styles.cell}
                 style={{
-                  backgroundPosition:
-                    boardnum === 1
-                      ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
-                      : -30 * (6 + boardnum),
+                  background: `url('~/src/assets/images/icons.png') no-repeat`,
+                  backgroundPosition: -270,
+                  backgroundColor:
+                    newbombMap[y][x] === 1 && newuserInput[y][x] === 1 ? 'red' : '#c6c6c6',
+                  zIndex: 10,
                 }}
-                //参考 style={boardnum === 1 ? { backgroundColor: "lightblue" } : {}}
               >
-                {boardnum === 1 && countArroundBomb(y, x, directions, bombMap) === 0 && (
-                  <div className={styles.empty} />
-                )}
                 {boardnum === 0 && <div className={styles.covered} />}
+                {boardnum === 1 &&
+                  (countArroundBomb(y, x, directions, bombMap) === 0 ? (
+                    <div className={styles.empty} />
+                  ) : (
+                    <div
+                      className={styles.opened}
+                      style={{
+                        backgroundPosition:
+                          -30 * (countArroundBomb(y, x, directions, newbombMap) - 1),
+                      }}
+                    />
+                  ))}
+                {boardnum > 1 && (
+                  <div
+                    className={styles.opened}
+                    style={{
+                      backgroundPosition: -30 * (6 + boardnum),
+                    }}
+                  />
+                )}
+                {/* {boardnum !== 0 && countArroundBomb(y, x, directions, bombMap) > 0 && (
+                  <div
+                    className={styles.opened}
+                    style={{
+                      backgroundPosition:
+                        boardnum === 1
+                          ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
+                          : -30 * (6 + boardnum),
+                    }}
+                  />
+                )} */}
                 {/* {boardnum === 0 && <div className={styles.covered} />}
               {boardnum === 1 && <div className={styles.opened} />}
               {boardnum === 2 && <div className={styles.question} />}
