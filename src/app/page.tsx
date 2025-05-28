@@ -120,6 +120,11 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.backgroundboard}>
+        <div className={styles.optionbox}>
+          <div className={styles.leftbomb}>残りボム</div>
+          <div className={styles.faceicon}>顔</div>
+          <div className={styles.time}>時間</div>
+        </div>
         <div className={styles.board}>
           {board.map((row, y) =>
             row.map((boardnum, x) => (
