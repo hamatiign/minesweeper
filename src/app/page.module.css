@@ -101,6 +101,24 @@
   border: 2px solid gray;
 }
 
+.bombfired {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: #f00;
+
+  /* background:
+    linear-gradient(rgb(255 0 0 / 50%), rgb(255 0 0 /50%)), url('~/src/assets/images/icons.png'); */
+  background-position: -300px;
+
+  /* background-size: cover; */
+
+  /* background-blend-mode: multiply; */
+}
+
 /*
 .question {
   width: 30px;

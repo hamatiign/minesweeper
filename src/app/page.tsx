@@ -141,17 +141,17 @@ export default function Home() {
               <div
                 key={`${x}-${y}`}
                 onClick={() => clickHandler(x, y)}
-                className={styles.cell}
-                style={{
-                  background: `url('~/src/assets/images/icons.png') no-repeat`,
-                  backgroundPosition: -270,
-                  backgroundColor:
-                    newbombMap[y][x] === 1 && newuserInput[y][x] === 1 ? 'red' : '#c6c6c6',
-                  zIndex: 10,
-                }}
+                className={
+                  userInput[y][x] === 1 && bombMap[y][x] === 1 ? styles.bombfired : styles.cell
+                }
+                // {userInput[y][x] === 1 && bombMap[y][x] === 1 ? {className:styles.bombfired} : {className:styles.cell}}
+
+                // className={styles.cell}
+                // {userInput[y][x] === 1 && bombMap[y][x] === 1 ? {className={styles.bombfired}}}
               >
                 {boardnum === 0 && <div className={styles.covered} />}
                 {boardnum === 1 &&
+                  newbombMap[y][x] !== 1 &&
                   (countArroundBomb(y, x, directions, bombMap) === 0 ? (
                     <div className={styles.empty} />
                   ) : (
