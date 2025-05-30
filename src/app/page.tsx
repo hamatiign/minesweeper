@@ -30,9 +30,9 @@ const getRandomValue = (boardlength: number): number => {
   return Math.floor(Math.random() * boardlength);
 };
 //二次元配列同氏の足し算
-function addMatrices(a: number[][], b: number[][]): number[][] {
-  return a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
-}
+// function addMatrices(a: number[][], b: number[][]): number[][] {
+//   return a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
+// }
 
 //空白連鎖の再起関数  値を直接いじらないようにしたい
 const do_empty_chain = (
@@ -45,11 +45,16 @@ const do_empty_chain = (
   if (userInput[y] === undefined) return;
   if (userInput[y][x] === undefined) return;
   if (userInput[y][x] === 1) return;
-  if (newbombMap[y][x] === 1) return;
   userInput[y][x] = 1;
   if (countArroundBomb(y, x, directions, newbombMap) > 0) return;
   for (let i = 0; i < 8; i++)
     do_empty_chain(y + directions[i][1], x + directions[i][0], directions, newbombMap, userInput);
+};
+
+const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
+  for (let i = 0; i < newuserInput.length; i++)
+    for (let j = 0; j < newuserInput.length; j++)
+      if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
 };
 
 export default function Home() {
@@ -83,12 +88,31 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
   let board = newuserInput;
-  let gameover = false;
+  const gameover = false;
   //========================================~~~~~~~~~~~~~==
-
+  const reset = (boardlength: number, newuserInput: number[][], newbombMap: number[][]) => {
+    newuserInput.forEach((row) => row.fill(0));
+    newbombMap.forEach((row) => row.fill(0));
+    setuserInput(newuserInput);
+    setbombMap(newbombMap);
+  };
+  const createflag = (
+    newuserInput: number[][],
+    x: number,
+    y: number,
+    evt: React.MouseEvent<HTMLDivElement>,
+  ) => {
+    evt.preventDefault();
+    // newuserInput[y][x] = 3;
+    if (newuserInput[y][x] === 0 || newuserInput[y][x] === 2) newuserInput[y][x] = 3;
+    else if (newuserInput[y][x] === 3) newuserInput[y][x] = 0;
+    setuserInput(newuserInput);
+    return;
+  };
   const clickHandler = (x: number, y: number) => {
     //初チェック時の爆弾生成
     while (
@@ -101,11 +125,13 @@ export default function Home() {
       newbombMap[bom_y][bom_x] = 1;
     }
 
-    //gameover判定
-    if (newbombMap[y][x] === 1) gameover = true;
+    // //gameover判定
+    // if (newbombMap[y][x] === 1) gameover = true;
+
+    do_empty_chain(y, x, directions, newbombMap, newuserInput);
 
     //gameoverでboardに爆弾を適応
-    if (gameover) {
+    if (isgameover(newuserInput, newbombMap)) {
       for (let i = 0; i < boardlength; i++)
         for (let j = 0; j < boardlength; j++)
           if (newbombMap[i][j] === 1) {
@@ -115,9 +141,7 @@ export default function Home() {
       alert('gameover');
     }
 
-    do_empty_chain(y, x, directions, newbombMap, newuserInput);
-    // newuserInput[y][x] = 1;
-
+    console.log('gameover', gameover);
     console.log('newbommap', newbombMap);
     console.log('newuserInput', newuserInput);
     console.log('board', board);
@@ -132,7 +156,10 @@ export default function Home() {
       <div className={styles.backgroundboard}>
         <div className={styles.optionbox}>
           <div className={styles.leftbomb}>残りボム</div>
-          <div className={styles.faceicon}>顔</div>
+          <div
+            onClick={() => reset(boardlength, newuserInput, newbombMap)}
+            className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
+          />
           <div className={styles.time}>時間</div>
         </div>
         <div className={styles.board}>
@@ -140,14 +167,11 @@ export default function Home() {
             row.map((boardnum, x) => (
               <div
                 key={`${x}-${y}`}
-                onClick={() => clickHandler(x, y)}
                 className={
-                  userInput[y][x] === 1 && bombMap[y][x] === 1 ? styles.bombfired : styles.cell
+                  userInput[y][x] === 1 && newbombMap[y][x] === 1 ? styles.bombfired : styles.cell
                 }
-                // {userInput[y][x] === 1 && bombMap[y][x] === 1 ? {className:styles.bombfired} : {className:styles.cell}}
-
-                // className={styles.cell}
-                // {userInput[y][x] === 1 && bombMap[y][x] === 1 ? {className={styles.bombfired}}}
+                onClick={() => clickHandler(x, y)}
+                onContextMenu={(evt) => createflag(newuserInput, x, y, evt)}
               >
                 {boardnum === 0 && <div className={styles.covered} />}
                 {boardnum === 1 &&
@@ -167,6 +191,11 @@ export default function Home() {
                   <div
                     className={styles.opened}
                     style={{
+                      border: boardnum === (2 | 3) ? '4px, solid' : '2px, solid',
+                      borderTopColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
+                      borderLeftColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
+                      borderRightColor: '#c6c6c6',
+                      borderBottomColor: '#c6c6c6',
                       backgroundPosition: -30 * (6 + boardnum),
                     }}
                   />
