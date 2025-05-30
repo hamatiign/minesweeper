@@ -108,8 +108,9 @@ export default function Home() {
   ) => {
     evt.preventDefault();
     // newuserInput[y][x] = 3;
-    if (newuserInput[y][x] === 0 || newuserInput[y][x] === 2) newuserInput[y][x] = 3;
-    else if (newuserInput[y][x] === 3) newuserInput[y][x] = 0;
+    if (newuserInput[y][x] === 0) newuserInput[y][x] = 3;
+    else if (newuserInput[y][x] === 3) newuserInput[y][x] = 2;
+    else if (newuserInput[y][x] === 2) newuserInput[y][x] = 0;
     setuserInput(newuserInput);
     return;
   };
@@ -129,6 +130,7 @@ export default function Home() {
     // if (newbombMap[y][x] === 1) gameover = true;
 
     do_empty_chain(y, x, directions, newbombMap, newuserInput);
+    userInput[y][x] = 1; //ボムを引いた時のユーザー入力を再起関数でいじれてないため
 
     //gameoverでboardに爆弾を適応
     if (isgameover(newuserInput, newbombMap)) {
@@ -180,37 +182,27 @@ export default function Home() {
                     <div className={styles.empty} />
                   ) : (
                     <div
-                      className={styles.opened}
+                      className={styles.nums}
                       style={{
                         backgroundPosition:
                           -30 * (countArroundBomb(y, x, directions, newbombMap) - 1),
                       }}
                     />
                   ))}
-                {boardnum > 1 && (
-                  <div
-                    className={styles.opened}
-                    style={{
-                      border: boardnum === (2 | 3) ? '4px, solid' : '2px, solid',
-                      borderTopColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
-                      borderLeftColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
-                      borderRightColor: '#c6c6c6',
-                      borderBottomColor: '#c6c6c6',
-                      backgroundPosition: -30 * (6 + boardnum),
-                    }}
-                  />
-                )}
+                {boardnum === 2 && <div className={styles.question} />}
+                {boardnum === 3 && <div className={styles.flag} />}
+                {boardnum === 4 && <div className={styles.bomb} />}
                 {/* {boardnum !== 0 && countArroundBomb(y, x, directions, bombMap) > 0 && (
                   <div
-                    className={styles.opened}
-                    style={{
-                      backgroundPosition:
-                        boardnum === 1
-                          ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
-                          : -30 * (6 + boardnum),
+                  className={styles.opened}
+                  style={{
+                    backgroundPosition:
+                    boardnum === 1
+                    ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
+                    : -30 * (6 + boardnum),
                     }}
-                  />
-                )} */}
+                    />
+                    )} */}
                 {/* {boardnum === 0 && <div className={styles.covered} />}
               {boardnum === 1 && <div className={styles.opened} />}
               {boardnum === 2 && <div className={styles.question} />}
@@ -224,3 +216,14 @@ export default function Home() {
     </div>
   );
 }
+
+// style={{
+//   backgroundSize: boardnum === (2 | 3) ? '294px, 21px' : '420px, 30px',
+//   border: boardnum === (2 | 3) ? '4px, solid' : '2px, solid',
+//   borderTopColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
+//   borderLeftColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
+//   borderRightColor: '#c6c6c6',
+//   borderBottomColor: '#c6c6c6',
+//   backgroundPosition:
+//     boardnum === (2 | 3) ? -20.9 * (6 + boardnum) : -30 * (6 + boardnum),
+// }}

@@ -43,15 +43,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 39px;
+  height: 39px;
   margin-right: 20px;
   margin-left: 20px;
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
   background-position: -330px;
-  border: 2px solid;
+  border: 4px solid;
   border-color: #fff gray gray #fff;
 }
 
@@ -59,15 +59,15 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 39px;
+  height: 39px;
   margin-right: 20px;
   margin-left: 20px;
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
   background-position: -390px;
-  border: 2px solid;
+  border: 4px solid;
   border-color: #fff gray gray #fff;
 }
 
@@ -114,7 +114,7 @@
   border: 2px solid gray;
 }
 
-.opened {
+.nums {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -123,6 +123,49 @@
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
+  border: 2px solid gray;
+}
+
+.question {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: #c6c6c6;
+  background-position: -167px;
+  background-size: 294px, 21px;
+  border: 4px solid;
+  border-color: #fff gray gray #fff;
+}
+
+.flag {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: #c6c6c6;
+  background-position: -188px;
+  background-size: 294px, 21px;
+  border: 4px solid;
+  border-color: #fff gray gray #fff;
+}
+
+.bomb {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  vertical-align: middle;
+  background: url('~/src/assets/images/icons.png') no-repeat;
+  background-color: #c6c6c6;
+  background-position: -300px;
   border: 2px solid gray;
 }
 
