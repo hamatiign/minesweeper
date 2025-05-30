@@ -165,7 +165,8 @@
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
-  background-position: -300px;
+  background-position: -238px;
+  background-size: 336px, 24px;
   border: 2px solid gray;
 }
 
@@ -177,7 +178,9 @@
   height: 30px;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #f00;
-  background-position: -300px;
+  background-position: -238px;
+  background-size: 336px, 24px;
+  border: 2px solid #f00;
 
   /* background:
       linear-gradient(rgb(255 0 0 / 50%), rgb(255 0 0 /50%)), url('~/src/assets/images/icons.png'); */

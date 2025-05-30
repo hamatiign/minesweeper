@@ -1,6 +1,7 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+
 import styles from './page.module.css';
 
 //後でstateやコンテキストでレベル別で出来るようにする
@@ -15,6 +16,13 @@ const calcTotal = (array: number[], counter: number) => {
   }
   return ans + counter;
 };
+//残りのボム数返す
+const countleftbomb = (board: number[][], bombnum: number) => {
+  return (
+    bombnum - board.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 3).length, 0)
+  );
+};
+
 //周囲のボム数えて返す
 const countArroundBomb = (y: number, x: number, directions: number[][], bombMap: number[][]) => {
   let arroundBombNum = 0;
@@ -33,7 +41,9 @@ const getRandomValue = (boardlength: number): number => {
 // function addMatrices(a: number[][], b: number[][]): number[][] {
 //   return a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
 // }
-
+// const check_timer_active = (board: number[][]) => {
+//   if (board.some((row) => row.some((num) => num !== 0))) return true;
+// };
 //空白連鎖の再起関数  値を直接いじらないようにしたい
 const do_empty_chain = (
   y: number,
@@ -56,7 +66,6 @@ const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
     for (let j = 0; j < newuserInput.length; j++)
       if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
 };
-
 export default function Home() {
   const directions = [
     [1, 1],
@@ -88,10 +97,28 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0],
   ]);
-
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
   let board = newuserInput;
+
+  //初期値を-１として
+  const [time, settime] = useState(0);
+  // const starttimer = (board: number[][]) => {
+  //   if (board.some((row) => row.some((num) => num !== 0))) settime(0);
+  // };
+  const [istimerRun, setistimerRun] = useState(false);
+  useEffect(
+    () => {
+      if (!istimerRun) return;
+      const interval = setInterval(() => {
+        settime(time + 1);
+      }, 1000);
+      return () => clearInterval(interval);
+    },
+    //ここに依存するものを書く
+    [time, istimerRun],
+  );
+
   const gameover = false;
   //========================================~~~~~~~~~~~~~==
   const reset = (boardlength: number, newuserInput: number[][], newbombMap: number[][]) => {
@@ -99,22 +126,29 @@ export default function Home() {
     newbombMap.forEach((row) => row.fill(0));
     setuserInput(newuserInput);
     setbombMap(newbombMap);
+    setistimerRun(false);
+    settime(0);
   };
-  const createflag = (
+
+  const rightclick = (
     newuserInput: number[][],
     x: number,
     y: number,
     evt: React.MouseEvent<HTMLDivElement>,
   ) => {
     evt.preventDefault();
+    if (isgameover(newuserInput, newbombMap)) return;
     // newuserInput[y][x] = 3;
     if (newuserInput[y][x] === 0) newuserInput[y][x] = 3;
     else if (newuserInput[y][x] === 3) newuserInput[y][x] = 2;
     else if (newuserInput[y][x] === 2) newuserInput[y][x] = 0;
     setuserInput(newuserInput);
+    if (!istimerRun) setistimerRun(true);
     return;
   };
+
   const clickHandler = (x: number, y: number) => {
+    if (isgameover(newuserInput, newbombMap)) return;
     //初チェック時の爆弾生成
     while (
       newbombMap.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 1).length, 0) <
@@ -151,18 +185,19 @@ export default function Home() {
     board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
+    if (!istimerRun) setistimerRun(true);
   };
   //=========================================================
   return (
     <div className={styles.container}>
       <div className={styles.backgroundboard}>
         <div className={styles.optionbox}>
-          <div className={styles.leftbomb}>残りボム</div>
+          <div className={styles.leftbomb}>{countleftbomb(board, bombnum)}</div>
           <div
             onClick={() => reset(boardlength, newuserInput, newbombMap)}
             className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
           />
-          <div className={styles.time}>時間</div>
+          <div className={styles.time}>{time}</div>
         </div>
         <div className={styles.board}>
           {board.map((row, y) =>
@@ -173,7 +208,7 @@ export default function Home() {
                   userInput[y][x] === 1 && newbombMap[y][x] === 1 ? styles.bombfired : styles.cell
                 }
                 onClick={() => clickHandler(x, y)}
-                onContextMenu={(evt) => createflag(newuserInput, x, y, evt)}
+                onContextMenu={(evt) => rightclick(newuserInput, x, y, evt)}
               >
                 {boardnum === 0 && <div className={styles.covered} />}
                 {boardnum === 1 &&
