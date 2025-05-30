@@ -130,6 +130,7 @@ export default function Home() {
     settime(0);
   };
 
+  const choiselevels = () => {};
   const rightclick = (
     newuserInput: number[][],
     x: number,
@@ -190,8 +191,17 @@ export default function Home() {
   //=========================================================
   return (
     <div className={styles.container}>
-      <div className={styles.backgroundboard}>
-        <div className={styles.optionbox}>
+      <div className={styles.levels}>
+        <span className={styles.myspan}>初級</span>
+        <span className={styles.myspan}>中級</span>
+        <span className={styles.myspan}>上級</span>
+        <span className={styles.myspan}>カスタム</span>
+      </div>
+      <div
+        className={styles.backgroundboard}
+        style={{ width: boardlength * 30 + 36, height: boardlength * 30 + 16.5 * 3 + 70 }}
+      >
+        <div className={styles.optionbox} style={{ width: 30 * boardlength }}>
           <div className={styles.leftbomb}>{countleftbomb(board, bombnum)}</div>
           <div
             onClick={() => reset(boardlength, newuserInput, newbombMap)}
