@@ -151,7 +151,7 @@ export default function Home() {
 
     const width = parseInt(inputwidth.value, 10);
     const height = parseInt(inputheight.value, 10);
-    const bombNum = parseInt(inputbombnum.value, 10);
+    const bombnum = parseInt(inputbombnum.value, 10);
 
     changeboard(width, height, bombnum, createZeroGrid(width, height));
     setistimerRun(false);
@@ -258,36 +258,36 @@ export default function Home() {
   return (
     <div className={styles.container}>
       <div className={styles.levels}>
-        <span className={styles.myspan} onClick={() => easylevelbottun()}>
+        <span className={styles.myspanlevels} onClick={() => easylevelbottun()}>
           初級
         </span>
-        <span className={styles.myspan} onClick={() => normallevelbottun()}>
+        <span className={styles.myspanlevels} onClick={() => normallevelbottun()}>
           中級
         </span>
-        <span className={styles.myspan} onClick={() => hardlevelbottun()}>
+        <span className={styles.myspanlevels} onClick={() => hardlevelbottun()}>
           上級
         </span>
-        <span className={styles.myspan} onClick={() => custombottun()}>
+        <span className={styles.myspanlevels} onClick={() => custombottun()}>
           カスタム
         </span>
       </div>
       {iscustom === true && (
-        <div>
-          <div>
+        <div className={styles.customs}>
+          <span className={styles.myspancustoms}>
             幅：
-            <input type="text" name="inputwidth" />
-          </div>
-          <div>
+            <input type="text" name="inputwidth" className={styles.myinput} />
+          </span>
+          <span className={styles.myspancustoms}>
             高さ：
-            <input type="text" />
-          </div>
-          <div>
+            <input type="text" name="inputheight" className={styles.myinput} />
+          </span>
+          <span className={styles.myspancustoms}>
             爆弾数：
-            <input type="text" />
-          </div>
-          <div onClick={() => updatecustomboard()}>
+            <input type="text" name="inputbombnum" className={styles.myinput} />
+          </span>
+          <span className={styles.myspancustoms} onClick={() => updatecustomboard()}>
             <button>更新</button>
-          </div>
+          </span>
         </div>
       )}
 
