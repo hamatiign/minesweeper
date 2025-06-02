@@ -274,7 +274,7 @@ export default function Home() {
         </div>
         <div
           className={
-            checkdlevelstr(newuserInput, iscustom) === 'hard' ? styles.correntlevel : styles.level
+            checkdlevelstr(newuserInput, iscustom) === 'hard' ? styles.currentlevel : styles.level
           }
           id="hard"
           onClick={() => hardlevelbottun()}
