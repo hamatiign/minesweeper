@@ -10,9 +10,33 @@
 
 .levels {
   position: relative;
+  display: flex;
+  flex-wrap: nowrap;
   margin-top: 20px;
   margin-bottom: 20px;
   margin-left: 20px;
+  color: #337ab7;
+}
+
+/* 選択時は４４４４４４ */
+
+.level {
+  margin-right: 30px;
+  font-size: 22px;
+  border-bottom: solid transparent 1px;
+}
+
+.level:hover {
+  color: midnightblue;
+  border-bottom-color: midnightblue;
+}
+
+.currentlevel {
+  margin-right: 30px;
+  font-size: 22px;
+  color: black;
+  border-bottom: solid transparent 1px;
+  border-bottom-color: transparent;
 }
 
 .myinput {
@@ -25,11 +49,6 @@
   margin-bottom: 20px;
   margin-left: 20px;
   font-size: 21px;
-}
-
-.myspanlevels {
-  margin-right: 30px;
-  font-size: 22px;
 }
 
 .myspancustoms {

@@ -116,25 +116,28 @@ export default function Home() {
   let board = newuserInput;
 
   const [time, settime] = useState(0);
-  // const starttimer = (board: number[][]) => {
-  //   if (board.some((row) => row.some((num) => num !== 0))) settime(0);
-  // };
+
   const [istimerRun, setistimerRun] = useState(false);
   const [iscustom, setcustom] = useState(false);
 
-  useEffect(
-    () => {
-      if (!istimerRun) return;
-      const interval = setInterval(() => {
-        settime(time + 1);
-      }, 1000);
-      return () => clearInterval(interval);
-    },
-    //ここに依存するものを書く
-    [time, istimerRun],
-  );
+  useEffect(() => {
+    if (!istimerRun) return;
+    const interval = setInterval(() => {
+      settime(time + 1);
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [time, istimerRun]);
 
-  const gameover = false;
+  const checkdlevelstr = (newuserInput: number[][], iscustom: boolean) => {
+    const width = newuserInput.length;
+    if (width === 9 && !iscustom) return 'easy';
+    if (width === 16 && !iscustom) return 'normal';
+    if (width === 30 && !iscustom) return 'hard';
+    else return 'custom';
+  };
+
+  // const gameover = false;
+
   //========================================~~~~~~~~~~~~~==
   const reset = (newuserInput: number[][], newbombMap: number[][]) => {
     newuserInput.forEach((row) => row.fill(0));
@@ -144,6 +147,7 @@ export default function Home() {
     setistimerRun(false);
     settime(0);
   };
+
   const updatecustomboard = () => {
     const inputwidth = document.getElementsByName('inputwidth')[0] as HTMLInputElement;
     const inputheight = document.getElementsByName('inputheight')[0] as HTMLInputElement;
@@ -196,6 +200,7 @@ export default function Home() {
     console.log('boardlength', boardlength);
     console.log('bombnum', bombnum);
   };
+
   const rightclick = (
     newuserInput: number[][],
     x: number,
@@ -226,9 +231,6 @@ export default function Home() {
       newbombMap[bom_y][bom_x] = 1;
     }
 
-    // //gameover判定
-    // if (newbombMap[y][x] === 1) gameover = true;
-
     do_empty_chain(y, x, directions, newbombMap, newuserInput);
     userInput[y][x] = 1; //ボムを引いた時のユーザー入力を再起関数でいじれてないため
 
@@ -243,33 +245,51 @@ export default function Home() {
       alert('gameover');
     }
 
-    console.log('gameover', gameover);
-    console.log('newbommap', newbombMap);
-    console.log('newuserInput', newuserInput);
-    console.log('board', board);
-    // console.log('reccount', rec_count);
     board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (!istimerRun) setistimerRun(true);
-    console.log('ggrid', createZeroGrid(16, 16));
   };
   //=========================================================
   return (
     <div className={styles.container}>
       <div className={styles.levels}>
-        <span className={styles.myspanlevels} onClick={() => easylevelbottun()}>
+        <div
+          className={
+            checkdlevelstr(newuserInput, iscustom) === 'easy' ? styles.currentlevel : styles.level
+          }
+          id="easy"
+          onClick={() => easylevelbottun()}
+        >
           初級
-        </span>
-        <span className={styles.myspanlevels} onClick={() => normallevelbottun()}>
+        </div>
+        <div
+          className={
+            checkdlevelstr(newuserInput, iscustom) === 'normal' ? styles.currentlevel : styles.level
+          }
+          id="normal"
+          onClick={() => normallevelbottun()}
+        >
           中級
-        </span>
-        <span className={styles.myspanlevels} onClick={() => hardlevelbottun()}>
+        </div>
+        <div
+          className={
+            checkdlevelstr(newuserInput, iscustom) === 'hard' ? styles.correntlevel : styles.level
+          }
+          id="hard"
+          onClick={() => hardlevelbottun()}
+        >
           上級
-        </span>
-        <span className={styles.myspanlevels} onClick={() => custombottun()}>
+        </div>
+        <div
+          className={
+            checkdlevelstr(newuserInput, iscustom) === 'custom' ? styles.currentlevel : styles.level
+          }
+          id="custom"
+          onClick={() => custombottun()}
+        >
           カスタム
-        </span>
+        </div>
       </div>
       {iscustom === true && (
         <div className={styles.customs}>
