@@ -5,8 +5,6 @@ import { useEffect, useState } from 'react';
 import styles from './page.module.css';
 
 //後でstateやコンテキストでレベル別で出来るようにする
-const bombnum = 10;
-const boardlength: number = 8;
 
 //今のところ関係ない
 const calcTotal = (array: number[], counter: number) => {
@@ -16,6 +14,15 @@ const calcTotal = (array: number[], counter: number) => {
   }
   return ans + counter;
 };
+
+//二次元配列の生成
+function createZeroGrid(cols: number, rows: number): number[][] {
+  const grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0));
+  return grid;
+}
+// 例: 縦3×横4のグリッドを生成
+console.log(createZeroGrid(3, 4));
+
 //残りのボム数返す
 const countleftbomb = (board: number[][], bombnum: number) => {
   return (
@@ -34,8 +41,8 @@ const countArroundBomb = (y: number, x: number, directions: number[][], bombMap:
   return arroundBombNum;
 };
 //ボム生成用の乱数  添え字を返す
-const getRandomValue = (boardlength: number): number => {
-  return Math.floor(Math.random() * boardlength);
+const getRandomValue = (endnum: number) => {
+  return Math.floor(Math.random() * endnum);
 };
 //二次元配列同氏の足し算
 // function addMatrices(a: number[][], b: number[][]): number[][] {
@@ -44,6 +51,7 @@ const getRandomValue = (boardlength: number): number => {
 // const check_timer_active = (board: number[][]) => {
 //   if (board.some((row) => row.some((num) => num !== 0))) return true;
 // };
+
 //空白連鎖の再起関数  値を直接いじらないようにしたい
 const do_empty_chain = (
   y: number,
@@ -63,10 +71,13 @@ const do_empty_chain = (
 
 const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
   for (let i = 0; i < newuserInput.length; i++)
-    for (let j = 0; j < newuserInput.length; j++)
+    for (let j = 0; j < newuserInput[0].length; j++)
       if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
 };
+
 export default function Home() {
+  const [bombnum, setbombnum] = useState(10);
+  const [boardlength, setboardlength] = useState([9, 9]); //（横、縦）
   const directions = [
     [1, 1],
     [1, 0],
@@ -78,35 +89,39 @@ export default function Home() {
     [-1, -1],
   ];
   const [userInput, setuserInput] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
   const [bombMap, setbombMap] = useState([
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
-    [0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
+    [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
+
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
   let board = newuserInput;
 
-  //初期値を-１として
   const [time, settime] = useState(0);
   // const starttimer = (board: number[][]) => {
   //   if (board.some((row) => row.some((num) => num !== 0))) settime(0);
   // };
   const [istimerRun, setistimerRun] = useState(false);
+  const [iscustom, setcustom] = useState(false);
+
   useEffect(
     () => {
       if (!istimerRun) return;
@@ -121,7 +136,7 @@ export default function Home() {
 
   const gameover = false;
   //========================================~~~~~~~~~~~~~==
-  const reset = (boardlength: number, newuserInput: number[][], newbombMap: number[][]) => {
+  const reset = (newuserInput: number[][], newbombMap: number[][]) => {
     newuserInput.forEach((row) => row.fill(0));
     newbombMap.forEach((row) => row.fill(0));
     setuserInput(newuserInput);
@@ -129,8 +144,58 @@ export default function Home() {
     setistimerRun(false);
     settime(0);
   };
+  const updatecustomboard = () => {
+    const inputwidth = document.getElementsByName('inputwidth')[0] as HTMLInputElement;
+    const inputheight = document.getElementsByName('inputheight')[0] as HTMLInputElement;
+    const inputbombnum = document.getElementsByName('inputbombnum')[0] as HTMLInputElement;
 
-  const choiselevels = () => {};
+    const width = parseInt(inputwidth.value, 10);
+    const height = parseInt(inputheight.value, 10);
+    const bombNum = parseInt(inputbombnum.value, 10);
+
+    changeboard(width, height, bombnum, createZeroGrid(width, height));
+    setistimerRun(false);
+    settime(0);
+    setcustom(true);
+  };
+  const custombottun = () => {
+    changeboard(9, 9, 10, createZeroGrid(9, 9));
+    setistimerRun(false);
+    settime(0);
+    setcustom(true);
+  };
+  const easylevelbottun = () => {
+    changeboard(9, 9, 10, createZeroGrid(9, 9));
+    setistimerRun(false);
+    settime(0);
+    setcustom(false);
+  };
+  const normallevelbottun = () => {
+    changeboard(16, 16, 40, createZeroGrid(16, 16));
+    setistimerRun(false);
+    settime(0);
+    setcustom(false);
+  };
+  const hardlevelbottun = () => {
+    changeboard(30, 16, 99, createZeroGrid(30, 16));
+    setistimerRun(false);
+    settime(0);
+    setcustom(false);
+  };
+
+  const changeboard = (
+    width: number,
+    height: number,
+    bombnum: number,
+    newuserInput: number[][],
+  ) => {
+    setboardlength([width, height]);
+    setbombnum(bombnum);
+    setuserInput(newuserInput);
+    setbombMap(newuserInput);
+    console.log('boardlength', boardlength);
+    console.log('bombnum', bombnum);
+  };
   const rightclick = (
     newuserInput: number[][],
     x: number,
@@ -155,8 +220,8 @@ export default function Home() {
       newbombMap.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 1).length, 0) <
       bombnum
     ) {
-      const bom_x = getRandomValue(boardlength);
-      const bom_y = getRandomValue(boardlength);
+      const bom_x = getRandomValue(boardlength[0]);
+      const bom_y = getRandomValue(boardlength[1]);
       if (bom_x === x && bom_y === y) continue;
       newbombMap[bom_y][bom_x] = 1;
     }
@@ -169,8 +234,8 @@ export default function Home() {
 
     //gameoverでboardに爆弾を適応
     if (isgameover(newuserInput, newbombMap)) {
-      for (let i = 0; i < boardlength; i++)
-        for (let j = 0; j < boardlength; j++)
+      for (let i = 0; i < boardlength[1]; i++)
+        for (let j = 0; j < boardlength[0]; j++)
           if (newbombMap[i][j] === 1) {
             board[i][j] = 4;
           }
@@ -187,29 +252,61 @@ export default function Home() {
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (!istimerRun) setistimerRun(true);
+    console.log('ggrid', createZeroGrid(16, 16));
   };
   //=========================================================
   return (
     <div className={styles.container}>
       <div className={styles.levels}>
-        <span className={styles.myspan}>初級</span>
-        <span className={styles.myspan}>中級</span>
-        <span className={styles.myspan}>上級</span>
-        <span className={styles.myspan}>カスタム</span>
+        <span className={styles.myspan} onClick={() => easylevelbottun()}>
+          初級
+        </span>
+        <span className={styles.myspan} onClick={() => normallevelbottun()}>
+          中級
+        </span>
+        <span className={styles.myspan} onClick={() => hardlevelbottun()}>
+          上級
+        </span>
+        <span className={styles.myspan} onClick={() => custombottun()}>
+          カスタム
+        </span>
       </div>
+      {iscustom === true && (
+        <div>
+          <div>
+            幅：
+            <input type="text" name="inputwidth" />
+          </div>
+          <div>
+            高さ：
+            <input type="text" />
+          </div>
+          <div>
+            爆弾数：
+            <input type="text" />
+          </div>
+          <div onClick={() => updatecustomboard()}>
+            <button>更新</button>
+          </div>
+        </div>
+      )}
+
       <div
         className={styles.backgroundboard}
-        style={{ width: boardlength * 30 + 36, height: boardlength * 30 + 16.5 * 3 + 70 }}
+        style={{ width: boardlength[0] * 30 + 36, height: boardlength[1] * 30 + 16.5 * 3 + 70 }}
       >
-        <div className={styles.optionbox} style={{ width: 30 * boardlength }}>
+        <div className={styles.optionbox} style={{ width: 30 * boardlength[0] }}>
           <div className={styles.leftbomb}>{countleftbomb(board, bombnum)}</div>
           <div
-            onClick={() => reset(boardlength, newuserInput, newbombMap)}
+            onClick={() => reset(newuserInput, newbombMap)}
             className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
           />
           <div className={styles.time}>{time}</div>
         </div>
-        <div className={styles.board}>
+        <div
+          className={styles.board}
+          style={{ width: boardlength[0] * 30 + 8, height: boardlength[1] * 30 + 8 }}
+        >
           {board.map((row, y) =>
             row.map((boardnum, x) => (
               <div
