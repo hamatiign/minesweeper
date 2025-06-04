@@ -111,8 +111,13 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
+  const [customboardwidth, setcustomboardwidth] = useState(9);
+  const [customboardheight, setcustomboardheight] = useState(9);
+  const [custombombcount, setcustombombcount] = useState(10);
+
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
+
   let board = newuserInput;
 
   const [time, settime] = useState(0);
@@ -148,16 +153,18 @@ export default function Home() {
     settime(0);
   };
 
+  const checkthenNumber = (inputstr: string) => {
+    if (inputstr === '0') return 1;
+    else return Number(inputstr);
+  };
+
   const updatecustomboard = () => {
-    const inputwidth = document.getElementsByName('inputwidth')[0] as HTMLInputElement;
-    const inputheight = document.getElementsByName('inputheight')[0] as HTMLInputElement;
-    const inputbombnum = document.getElementsByName('inputbombnum')[0] as HTMLInputElement;
-
-    const width = parseInt(inputwidth.value, 10);
-    const height = parseInt(inputheight.value, 10);
-    const bombnum = parseInt(inputbombnum.value, 10);
-
-    changeboard(width, height, bombnum, createZeroGrid(width, height));
+    changeboard(
+      customboardwidth,
+      customboardheight,
+      custombombcount,
+      createZeroGrid(customboardwidth, customboardheight),
+    );
     setistimerRun(false);
     settime(0);
     setcustom(true);
@@ -295,15 +302,46 @@ export default function Home() {
         <div className={styles.customs}>
           <span className={styles.myspancustoms}>
             幅：
-            <input type="text" name="inputwidth" className={styles.myinput} />
+            <input
+              type="number"
+              min={1}
+              max={100}
+              value={customboardwidth}
+              onChange={(e) =>
+                !isNaN(Number(e.target.value)) && setcustomboardwidth(Number(e.target.value))
+              }
+              name="inputwidth"
+              className={styles.myinput}
+            />
           </span>
           <span className={styles.myspancustoms}>
             高さ：
-            <input type="text" name="inputheight" className={styles.myinput} />
+            <input
+              type="number"
+              min="1"
+              max={100}
+              value={customboardheight}
+              onChange={(e) =>
+                !isNaN(Number(e.target.value)) &&
+                setcustomboardheight(checkthenNumber(e.target.value))
+              }
+              name="inputheight"
+              className={styles.myinput}
+            />
           </span>
           <span className={styles.myspancustoms}>
             爆弾数：
-            <input type="text" name="inputbombnum" className={styles.myinput} />
+            <input
+              type="number"
+              min={1}
+              max={boardlength[0] * boardlength[1] - 1}
+              value={custombombcount}
+              onChange={(e) =>
+                !isNaN(Number(e.target.value)) && setcustombombcount(Number(e.target.value))
+              }
+              name="inputbombnum"
+              className={styles.myinput}
+            />
           </span>
           <span className={styles.myspancustoms} onClick={() => updatecustomboard()}>
             <button>更新</button>
