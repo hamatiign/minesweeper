@@ -88,9 +88,14 @@
   justify-content: center;
   width: 60px;
   height: 39px;
-  margin-left: 10px;
-  font-size: xx-large;
-  border: 4px solid blue;
+  margin-left: 20px;
+}
+
+.leftbombnum {
+  width: 20px;
+  height: 39px;
+  background: url('~/src/assets/images/seven_segment_0_to_9.png');
+  background-position: -4px -8px;
 }
 
 .iconsmile {
@@ -99,8 +104,8 @@
   justify-content: center;
   width: 39px;
   height: 39px;
-  margin-right: 20px;
-  margin-left: 20px;
+  margin-right: auto;
+  margin-left: auto;
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
@@ -115,8 +120,8 @@
   justify-content: center;
   width: 39px;
   height: 39px;
-  margin-right: 20px;
-  margin-left: 20px;
+  margin-right: auto;
+  margin-left: auto;
   vertical-align: middle;
   background: url('~/src/assets/images/icons.png') no-repeat;
   background-color: #c6c6c6;
@@ -131,8 +136,14 @@
   justify-content: right;
   width: 60px;
   height: 39px;
-  font-size: xx-large;
-  border: 4px solid blue;
+  margin-right: 20px;
+}
+
+.timenum {
+  width: 20px;
+  height: 39px;
+  background: url('~/src/assets/images/seven_segment_0_to_9.png');
+  background-position: -4px -8px;
 }
 
 .board {

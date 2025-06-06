@@ -141,6 +141,16 @@ export default function Home() {
     else return 'custom';
   };
 
+  const leftbombnumleft = Math.floor(countleftbomb(board, bombnum) / 100);
+  const leftbombnumcenter = Math.floor(
+    (countleftbomb(board, bombnum) - leftbombnumleft * 100) / 10,
+  );
+  const leftbombnumright = Math.floor(
+    countleftbomb(board, bombnum) - (leftbombnumleft * 100 + leftbombnumcenter * 10),
+  );
+  const timeleft = Math.floor(time / 100);
+  const timecenter = Math.floor((time - timeleft * 100) / 10);
+  const timeright = Math.floor(time - (timeleft * 100 + timecenter * 10));
   // const gameover = false;
 
   //========================================~~~~~~~~~~~~~==
@@ -153,12 +163,18 @@ export default function Home() {
     settime(0);
   };
 
-  const checkthenNumber = (inputstr: string) => {
-    if (inputstr === '0') return 1;
+  const checkthenNumber = (inputstr: string, min: number, max: number) => {
+    console.log('inputstr', inputstr);
+    if (inputstr === '') return min;
+    if (inputstr === '0') return min;
+    if (Number(inputstr) > max) return max;
     else return Number(inputstr);
   };
 
   const updatecustomboard = () => {
+    if (customboardwidth < 1) setcustomboardwidth(1);
+    if (customboardheight < 1) setcustomboardheight(1);
+    if (custombombcount < 1) setcustombombcount(1);
     changeboard(
       customboardwidth,
       customboardheight,
@@ -249,13 +265,13 @@ export default function Home() {
             board[i][j] = 4;
           }
       newuserInput[y][x] = 1;
-      alert('gameover');
     }
 
     board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (!istimerRun) setistimerRun(true);
+    if (isgameover(newuserInput, newbombMap)) setistimerRun(false);
   };
   //=========================================================
   return (
@@ -304,13 +320,11 @@ export default function Home() {
             幅：
             <input
               type="number"
-              min={1}
-              max={100}
               value={customboardwidth}
               onChange={(e) =>
-                !isNaN(Number(e.target.value)) && setcustomboardwidth(Number(e.target.value))
+                !isNaN(Number(e.target.value)) &&
+                setcustomboardwidth(checkthenNumber(e.target.value, 1, 100))
               }
-              name="inputwidth"
               className={styles.myinput}
             />
           </span>
@@ -318,14 +332,11 @@ export default function Home() {
             高さ：
             <input
               type="number"
-              min="1"
-              max={100}
               value={customboardheight}
               onChange={(e) =>
                 !isNaN(Number(e.target.value)) &&
-                setcustomboardheight(checkthenNumber(e.target.value))
+                setcustomboardheight(checkthenNumber(e.target.value, 1, 100))
               }
-              name="inputheight"
               className={styles.myinput}
             />
           </span>
@@ -333,13 +344,15 @@ export default function Home() {
             爆弾数：
             <input
               type="number"
-              min={1}
-              max={boardlength[0] * boardlength[1] - 1}
+              max={customboardwidth * customboardheight - 1}
+              aria-valuetext="custombombcount"
               value={custombombcount}
               onChange={(e) =>
-                !isNaN(Number(e.target.value)) && setcustombombcount(Number(e.target.value))
+                !isNaN(Number(e.target.value)) &&
+                setcustombombcount(
+                  checkthenNumber(e.target.value, 1, customboardwidth * customboardheight - 1),
+                )
               }
-              name="inputbombnum"
               className={styles.myinput}
             />
           </span>
@@ -354,12 +367,44 @@ export default function Home() {
         style={{ width: boardlength[0] * 30 + 36, height: boardlength[1] * 30 + 16.5 * 3 + 70 }}
       >
         <div className={styles.optionbox} style={{ width: 30 * boardlength[0] }}>
-          <div className={styles.leftbomb}>{countleftbomb(board, bombnum)}</div>
-          <div
-            onClick={() => reset(newuserInput, newbombMap)}
-            className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
-          />
-          <div className={styles.time}>{time}</div>
+          {boardlength[0] >= 4 && (
+            <div className={styles.leftbomb}>
+              <div
+                className={styles.leftbombnum}
+                style={{
+                  backgroundPosition: -30 * leftbombnumleft - 4,
+                }}
+              />
+              <div
+                className={styles.leftbombnum}
+                style={{
+                  backgroundPosition: -30 * leftbombnumcenter - 4,
+                }}
+              />
+              <div
+                className={styles.leftbombnum}
+                style={{
+                  backgroundPosition: -30 * leftbombnumright - 4,
+                }}
+              />
+            </div>
+          )}
+          {boardlength[0] >= 6 && (
+            <div
+              onClick={() => reset(newuserInput, newbombMap)}
+              className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
+            />
+          )}
+          {boardlength[0] >= 9 && (
+            <div className={styles.time}>
+              <div className={styles.timenum} style={{ backgroundPosition: -30 * timeleft - 4 }} />
+              <div
+                className={styles.timenum}
+                style={{ backgroundPosition: -30 * timecenter - 4 }}
+              />
+              <div className={styles.timenum} style={{ backgroundPosition: -30 * timeright - 4 }} />
+            </div>
+          )}
         </div>
         <div
           className={styles.board}
