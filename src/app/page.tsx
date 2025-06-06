@@ -114,7 +114,7 @@ export default function Home() {
   const [iscustom, setcustom] = useState(false);
 
   useEffect(() => {
-    if (time === -1) return;
+    if (time === -1 || time > 1000) return;
     const interval = setInterval(() => {
       settime(time + 1);
     }, 1000);
@@ -136,8 +136,8 @@ export default function Home() {
   const leftbombnumright = Math.floor(
     countleftbomb(board, bombnum) - (leftbombnumleft * 100 + leftbombnumcenter * 10),
   );
-
-  const timeleft = time === -1 ? 0 : Math.floor(time / 100);
+  const time_thousandsplace = time >= 1000 ? 1 : 0;
+  const timeleft = time === -1 ? 0 : Math.floor((time - time_thousandsplace * 1000) / 100);
   const timecenter = time === -1 ? 0 : Math.floor((time - timeleft * 100) / 10);
   const timeright = time === -1 ? 0 : Math.floor(time - (timeleft * 100 + timecenter * 10));
 
@@ -254,7 +254,7 @@ export default function Home() {
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (time === -1) settime(0);
-    // if (isgameover(newuserInput, newbombMap)) setistimerRun(false);
+    if (isgameover(newuserInput, newbombMap)) settime(1000 + time);
   };
   //=========================================================
   return (
