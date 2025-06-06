@@ -64,6 +64,23 @@ const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
       if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
 };
 
+//クリア判定
+const isclear = (newuserInput: number[][], newbombMap: number[][]) => {
+  if (
+    newuserInput.reduce((total, row) => total + row.filter((tmp) => tmp !== 1).length, 0) ===
+    newbombMap.reduce((total, row) => total + row.filter((tmp) => tmp === 1).length, 0)
+  )
+    return true;
+  return false;
+};
+
+const change_clear_board = (newuserInput: number[][]) => {
+  for (let i = 0; i < newuserInput.length; i++)
+    for (let j = 0; j < newuserInput[0].length; j++) {
+      if (newuserInput[i][j] !== 1) newuserInput[i][j] = 3;
+    }
+};
+
 export default function Home() {
   const [bombnum, setbombnum] = useState(10);
   const [boardlength, setboardlength] = useState([9, 9]); //（横、縦）
@@ -128,6 +145,7 @@ export default function Home() {
     if (width === 30 && !iscustom) return 'hard';
     else return 'custom';
   };
+  if (isclear(newuserInput, newbombMap)) change_clear_board(newuserInput);
 
   const leftbombnumleft = Math.floor(countleftbomb(board, bombnum) / 100);
   const leftbombnumcenter = Math.floor(
@@ -155,7 +173,7 @@ export default function Home() {
     console.log('inputstr', inputstr);
     if (inputstr === '') return min;
     if (inputstr === '0') return min;
-    if (Number(inputstr) > max) return max;
+    if (Number(inputstr) > max && max !== 0) return max;
     else return Number(inputstr);
   };
 
@@ -167,6 +185,8 @@ export default function Home() {
     if (customboardheight > 100) setcustomboardheight(100);
     if (custombombcount > customboardwidth * customboardheight - 1)
       setcustombombcount(customboardwidth * customboardheight - 1);
+    if (custombombcount > customboardwidth * customboardheight - 1 && custombombcount === 1)
+      setcustombombcount(1);
     changeboard(
       customboardwidth,
       customboardheight,
@@ -231,14 +251,18 @@ export default function Home() {
   const clickHandler = (x: number, y: number) => {
     if (isgameover(newuserInput, newbombMap)) return;
     //初チェック時の爆弾生成
-    while (
-      newbombMap.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 1).length, 0) <
-      bombnum
-    ) {
-      const bom_x = getRandomValue(boardlength[0]);
-      const bom_y = getRandomValue(boardlength[1]);
-      if (bom_x === x && bom_y === y) continue;
-      newbombMap[bom_y][bom_x] = 1;
+    if (newuserInput.length === 1 && newuserInput[0].length === 1)
+      newbombMap[0][0] = 1; //カスタムでの一マスのみの時用
+    else {
+      while (
+        newbombMap.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 1).length, 0) <
+        bombnum
+      ) {
+        const bom_x = getRandomValue(boardlength[0]);
+        const bom_y = getRandomValue(boardlength[1]);
+        if (bom_x === x && bom_y === y) continue;
+        newbombMap[bom_y][bom_x] = 1;
+      }
     }
 
     do_empty_chain(y, x, directions, newbombMap, newuserInput);
@@ -259,6 +283,7 @@ export default function Home() {
     setbombMap(newbombMap);
     if (time === -1) settime(0);
     if (isgameover(newuserInput, newbombMap)) settime(1000 + time);
+    if (isclear(newuserInput, newbombMap)) settime(1000 + time);
   };
   //=========================================================
   return (
@@ -379,7 +404,14 @@ export default function Home() {
           {boardlength[0] >= 6 && (
             <div
               onClick={() => reset(newuserInput, newbombMap)}
-              className={isgameover(newuserInput, newbombMap) ? styles.iconbad : styles.iconsmile}
+              className={styles.faceicon}
+              style={{
+                backgroundPosition: isgameover(newuserInput, newbombMap)
+                  ? -390
+                  : isclear(newuserInput, newbombMap)
+                    ? -360
+                    : -330,
+              }}
             />
           )}
           {boardlength[0] >= 9 && (
