@@ -117,14 +117,14 @@ export default function Home() {
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
   ]);
 
-  const [customboardwidth, setcustomboardwidth] = useState(9);
-  const [customboardheight, setcustomboardheight] = useState(9);
-  const [custombombcount, setcustombombcount] = useState(10);
+  const [customboardwidth, setcustomboardwidth] = useState('9');
+  const [customboardheight, setcustomboardheight] = useState('9');
+  const [custombombcount, setcustombombcount] = useState('10');
 
   const newuserInput = structuredClone(userInput);
   const newbombMap = structuredClone(bombMap);
 
-  let board = newuserInput;
+  const board = newuserInput;
 
   const [time, settime] = useState(-1);
 
@@ -169,33 +169,66 @@ export default function Home() {
     settime(-1);
   };
 
-  const checkthenNumber = (inputstr: string, min: number, max: number) => {
-    console.log('inputstr', inputstr);
-    if (inputstr === '') return min;
-    if (inputstr === '0') return min;
-    if (Number(inputstr) > max && max !== 0) return max;
-    else return Number(inputstr);
-  };
-
   const updatecustomboard = () => {
-    if (customboardwidth < 1) setcustomboardwidth(1);
-    if (customboardheight < 1) setcustomboardheight(1);
-    if (custombombcount < 1) setcustombombcount(1);
-    if (customboardwidth > 100) setcustomboardwidth(100);
-    if (customboardheight > 100) setcustomboardheight(100);
-    if (custombombcount > customboardwidth * customboardheight - 1)
-      setcustombombcount(customboardwidth * customboardheight - 1);
-    if (custombombcount > customboardwidth * customboardheight - 1 && custombombcount === 1)
-      setcustombombcount(1);
+    let numcustomboardwidth = customboardwidth === '' ? 1 : Number(customboardwidth);
+    let numcustomboardheight = customboardheight === '' ? 1 : Number(customboardheight);
+    let numcustombombcount = custombombcount === '' ? 1 : Number(custombombcount);
+
+    if (numcustomboardwidth < 1) numcustomboardwidth = 1;
+    if (numcustomboardheight < 1) numcustomboardheight = 1;
+    if (numcustombombcount < 1) numcustombombcount = 1;
+    if (numcustomboardwidth > 100) numcustomboardwidth = 100;
+    if (numcustomboardheight > 100) numcustomboardheight = 100;
+    if (
+      numcustombombcount > numcustomboardwidth * numcustomboardheight - 1 &&
+      numcustombombcount !== 1
+    )
+      numcustombombcount = numcustomboardwidth * numcustomboardheight - 1;
+    if (
+      numcustombombcount > numcustomboardwidth * numcustomboardheight - 1 &&
+      numcustombombcount === 1
+    )
+      numcustombombcount = 1;
+
+    setcustomboardwidth(String(numcustomboardwidth));
+    setcustomboardheight(String(numcustomboardheight));
+    setcustombombcount(String(numcustombombcount));
     changeboard(
-      customboardwidth,
-      customboardheight,
-      custombombcount,
-      createZeroGrid(customboardwidth, customboardheight),
+      numcustomboardwidth,
+      numcustomboardheight,
+      numcustombombcount,
+      createZeroGrid(numcustomboardwidth, numcustomboardheight),
     );
     settime(-1);
     setcustom(true);
   };
+  // const checkthenNumber = (inputstr: string, min: number, max: number) => {
+  //   console.log('inputstr', inputstr);
+  //   if (inputstr === '') return min;
+  //   if (inputstr === '0') return min;
+  //   if (Number(inputstr) > max && max !== 0) return max;
+  //   else return Number(inputstr);
+  // };
+
+  // const updatecustomboard = () => {
+  //   if (customboardwidth < 1) setcustomboardwidth(1);
+  //   if (customboardheight < 1) setcustomboardheight(1);
+  //   if (custombombcount < 1) setcustombombcount(1);
+  //   if (customboardwidth > 100) setcustomboardwidth(100);
+  //   if (customboardheight > 100) setcustomboardheight(100);
+  //   if (custombombcount > customboardwidth * customboardheight - 1)
+  //     setcustombombcount(customboardwidth * customboardheight - 1);
+  //   if (custombombcount > customboardwidth * customboardheight - 1 && custombombcount === 1)
+  //     setcustombombcount(1);
+  //   changeboard(
+  //     customboardwidth,
+  //     customboardheight,
+  //     custombombcount,
+  //     createZeroGrid(customboardwidth, customboardheight),
+  //   );
+  //   settime(-1);
+  //   setcustom(true);
+  // };
   const custombottun = () => {
     changeboard(9, 9, 10, createZeroGrid(9, 9));
     settime(-1);
@@ -278,7 +311,7 @@ export default function Home() {
       newuserInput[y][x] = 1;
     }
 
-    board = userInput;
+    // board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (time === -1) settime(0);
@@ -333,10 +366,11 @@ export default function Home() {
             <input
               type="number"
               value={customboardwidth}
-              onChange={(e) =>
-                !isNaN(Number(e.target.value)) &&
-                setcustomboardwidth(checkthenNumber(e.target.value, 1, 100))
-              }
+              onChange={(e) => setcustomboardwidth(e.target.value)}
+              // onChange={(e) =>
+              //   !isNaN(Number(e.target.value)) &&
+              //   setcustomboardwidth(checkthenNumber(e.target.value, 1, 100))
+              // }
               className={styles.myinput}
             />
           </span>
@@ -345,10 +379,11 @@ export default function Home() {
             <input
               type="number"
               value={customboardheight}
-              onChange={(e) =>
-                !isNaN(Number(e.target.value)) &&
-                setcustomboardheight(checkthenNumber(e.target.value, 1, 100))
-              }
+              onChange={(e) => setcustomboardheight(e.target.value)}
+              // onChange={(e) =>
+              //   !isNaN(Number(e.target.value)) &&
+              //   setcustomboardheight(checkthenNumber(e.target.value, 1, 100))
+              // }
               className={styles.myinput}
             />
           </span>
@@ -356,15 +391,15 @@ export default function Home() {
             爆弾数：
             <input
               type="number"
-              max={customboardwidth * customboardheight - 1}
               aria-valuetext="custombombcount"
               value={custombombcount}
-              onChange={(e) =>
-                !isNaN(Number(e.target.value)) &&
-                setcustombombcount(
-                  checkthenNumber(e.target.value, 1, customboardwidth * customboardheight - 1),
-                )
-              }
+              onChange={(e) => setcustombombcount(e.target.value)}
+              // onChange={(e) =>
+              //   !isNaN(Number(e.target.value)) &&
+              //   setcustombombcount(
+              //     checkthenNumber(e.target.value, 1, customboardwidth * customboardheight - 1),
+              //   )
+              // }
               className={styles.myinput}
             />
           </span>
@@ -456,22 +491,6 @@ export default function Home() {
                 {boardnum === 2 && <div className={styles.question} />}
                 {boardnum === 3 && <div className={styles.flag} />}
                 {boardnum === 4 && <div className={styles.bomb} />}
-                {/* {boardnum !== 0 && countArroundBomb(y, x, directions, bombMap) > 0 && (
-                  <div
-                  className={styles.opened}
-                  style={{
-                    backgroundPosition:
-                    boardnum === 1
-                    ? -30 * (countArroundBomb(y, x, directions, newbombMap) - 1)
-                    : -30 * (6 + boardnum),
-                    }}
-                    />
-                    )} */}
-                {/* {boardnum === 0 && <div className={styles.covered} />}
-              {boardnum === 1 && <div className={styles.opened} />}
-              {boardnum === 2 && <div className={styles.question} />}
-              {boardnum === 3 && <div className={styles.flag} />}
-              {boardnum === 4 && <div className={styles.bom} />} */}
               </div>
             )),
           )}
@@ -480,14 +499,3 @@ export default function Home() {
     </div>
   );
 }
-
-// style={{
-//   backgroundSize: boardnum === (2 | 3) ? '294px, 21px' : '420px, 30px',
-//   border: boardnum === (2 | 3) ? '4px, solid' : '2px, solid',
-//   borderTopColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
-//   borderLeftColor: boardnum === (2 | 3) ? '#fff' : '#c6c6c6',
-//   borderRightColor: '#c6c6c6',
-//   borderBottomColor: '#c6c6c6',
-//   backgroundPosition:
-//     boardnum === (2 | 3) ? -20.9 * (6 + boardnum) : -30 * (6 + boardnum),
-// }}
