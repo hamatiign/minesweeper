@@ -4,9 +4,6 @@ import { useEffect, useState } from 'react';
 
 import styles from './page.module.css';
 
-//後でstateやコンテキストでレベル別で出来るようにする
-
-//今のところ関係ない
 const calcTotal = (array: number[], counter: number) => {
   let ans: number = 0;
   for (let i = 0; i < array.length; i++) {
@@ -20,8 +17,6 @@ function createZeroGrid(cols: number, rows: number): number[][] {
   const grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0));
   return grid;
 }
-// 例: 縦3×横4のグリッドを生成
-console.log(createZeroGrid(3, 4));
 
 //残りのボム数返す
 const countleftbomb = (board: number[][], bombnum: number) => {
@@ -40,17 +35,11 @@ const countArroundBomb = (y: number, x: number, directions: number[][], bombMap:
   }
   return arroundBombNum;
 };
+
 //ボム生成用の乱数  添え字を返す
 const getRandomValue = (endnum: number) => {
   return Math.floor(Math.random() * endnum);
 };
-//二次元配列同氏の足し算
-// function addMatrices(a: number[][], b: number[][]): number[][] {
-//   return a.map((row, i) => row.map((value, j) => value + (b[i]?.[j] ?? 0)));
-// }
-// const check_timer_active = (board: number[][]) => {
-//   if (board.some((row) => row.some((num) => num !== 0))) return true;
-// };
 
 //空白連鎖の再起関数  値を直接いじらないようにしたい
 const do_empty_chain = (
@@ -120,21 +109,20 @@ export default function Home() {
 
   let board = newuserInput;
 
-  const [time, settime] = useState(0);
+  const [time, settime] = useState(-1);
 
-  const [istimerRun, setistimerRun] = useState(false);
   const [iscustom, setcustom] = useState(false);
 
   useEffect(() => {
-    if (!istimerRun) return;
+    if (time === -1) return;
     const interval = setInterval(() => {
       settime(time + 1);
     }, 1000);
     return () => clearInterval(interval);
-  }, [time, istimerRun]);
+  }, [time]);
 
   const checkdlevelstr = (newuserInput: number[][], iscustom: boolean) => {
-    const width = newuserInput.length;
+    const width = newuserInput[0].length;
     if (width === 9 && !iscustom) return 'easy';
     if (width === 16 && !iscustom) return 'normal';
     if (width === 30 && !iscustom) return 'hard';
@@ -148,19 +136,19 @@ export default function Home() {
   const leftbombnumright = Math.floor(
     countleftbomb(board, bombnum) - (leftbombnumleft * 100 + leftbombnumcenter * 10),
   );
-  const timeleft = Math.floor(time / 100);
-  const timecenter = Math.floor((time - timeleft * 100) / 10);
-  const timeright = Math.floor(time - (timeleft * 100 + timecenter * 10));
-  // const gameover = false;
+
+  const timeleft = time === -1 ? 0 : Math.floor(time / 100);
+  const timecenter = time === -1 ? 0 : Math.floor((time - timeleft * 100) / 10);
+  const timeright = time === -1 ? 0 : Math.floor(time - (timeleft * 100 + timecenter * 10));
 
   //========================================~~~~~~~~~~~~~==
+
   const reset = (newuserInput: number[][], newbombMap: number[][]) => {
     newuserInput.forEach((row) => row.fill(0));
     newbombMap.forEach((row) => row.fill(0));
     setuserInput(newuserInput);
     setbombMap(newbombMap);
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
   };
 
   const checkthenNumber = (inputstr: string, min: number, max: number) => {
@@ -181,32 +169,27 @@ export default function Home() {
       custombombcount,
       createZeroGrid(customboardwidth, customboardheight),
     );
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
     setcustom(true);
   };
   const custombottun = () => {
     changeboard(9, 9, 10, createZeroGrid(9, 9));
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
     setcustom(true);
   };
   const easylevelbottun = () => {
     changeboard(9, 9, 10, createZeroGrid(9, 9));
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
     setcustom(false);
   };
   const normallevelbottun = () => {
     changeboard(16, 16, 40, createZeroGrid(16, 16));
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
     setcustom(false);
   };
   const hardlevelbottun = () => {
     changeboard(30, 16, 99, createZeroGrid(30, 16));
-    setistimerRun(false);
-    settime(0);
+    settime(-1);
     setcustom(false);
   };
 
@@ -237,7 +220,7 @@ export default function Home() {
     else if (newuserInput[y][x] === 3) newuserInput[y][x] = 2;
     else if (newuserInput[y][x] === 2) newuserInput[y][x] = 0;
     setuserInput(newuserInput);
-    if (!istimerRun) setistimerRun(true);
+    if (time === -1) settime(0);
     return;
   };
 
@@ -270,8 +253,8 @@ export default function Home() {
     board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
-    if (!istimerRun) setistimerRun(true);
-    if (isgameover(newuserInput, newbombMap)) setistimerRun(false);
+    if (time === -1) settime(0);
+    // if (isgameover(newuserInput, newbombMap)) setistimerRun(false);
   };
   //=========================================================
   return (
