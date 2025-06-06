@@ -163,6 +163,10 @@ export default function Home() {
     if (customboardwidth < 1) setcustomboardwidth(1);
     if (customboardheight < 1) setcustomboardheight(1);
     if (custombombcount < 1) setcustombombcount(1);
+    if (customboardwidth > 100) setcustomboardwidth(100);
+    if (customboardheight > 100) setcustomboardheight(100);
+    if (custombombcount > customboardwidth * customboardheight - 1)
+      setcustombombcount(customboardwidth * customboardheight - 1);
     changeboard(
       customboardwidth,
       customboardheight,
