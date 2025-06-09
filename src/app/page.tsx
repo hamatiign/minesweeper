@@ -4,13 +4,24 @@ import { useEffect, useState } from 'react';
 
 import styles from './page.module.css';
 
-const calcTotal = (array: number[], counter: number) => {
-  let ans: number = 0;
-  for (let i = 0; i < array.length; i++) {
-    ans += array[i];
-  }
-  return ans + counter;
-};
+// const calcTotal = (array: number[], counter: number) => {
+//   let ans: number = 0;
+//   for (let i = 0; i < array.length; i++) {
+//     ans += array[i];
+//   }
+//   return ans + counter;
+// };
+
+//数字の各桁を取り出す
+// const extract_digits = (num: number, length: number) => {
+//   const strnum = String(num);
+//   const array = [];
+//   for (let i = 0; i < strnum.length; i++) array.push(strnum[i]);
+//   while (array.length < length) {
+//     array.unshift(0);
+//   }
+//   return array;
+// };
 
 //二次元配列の生成
 function createZeroGrid(cols: number, rows: number): number[][] {
@@ -147,6 +158,12 @@ export default function Home() {
   };
   if (isclear(newuserInput, newbombMap)) change_clear_board(newuserInput);
 
+  // const leftbombnumleft = extract_digits(countleftbomb(board, bombnum), 3)[0];
+  // const leftbombnumcenter = extract_digits(countleftbomb(board, bombnum), 3)[1];
+  // const leftbombnumright = extract_digits(countleftbomb(board, bombnum), 3)[2];
+  // const timeleft = extract_digits(time, 4)[1];
+  // const timecenter = extract_digits(time, 4)[2];
+  // const timeright = extract_digits(time, 4)[3];
   const leftbombnumleft = Math.floor(countleftbomb(board, bombnum) / 100);
   const leftbombnumcenter = Math.floor(
     (countleftbomb(board, bombnum) - leftbombnumleft * 100) / 10,
@@ -304,15 +321,14 @@ export default function Home() {
 
     //gameoverでboardに爆弾を適応
     if (isgameover(newuserInput, newbombMap)) {
-      for (let i = 0; i < boardlength[1]; i++)
-        for (let j = 0; j < boardlength[0]; j++)
-          if (newbombMap[i][j] === 1) {
-            board[i][j] = 4;
-          }
+      newuserInput.forEach((row, y) => {
+        row.forEach((num, x) => {
+          if (newbombMap[y][x] === 1) newuserInput[y][x] = 4;
+        });
+      });
       newuserInput[y][x] = 1;
     }
 
-    // board = userInput;
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (time === -1) settime(0);
@@ -481,7 +497,19 @@ export default function Home() {
                 onClick={() => clickHandler(x, y)}
                 onContextMenu={(evt) => rightclick(newuserInput, x, y, evt)}
               >
-                {boardnum === 0 && <div className={styles.covered} />}
+                {boardnum === 0 && (
+                  // (isgameover(newuserInput, newbombMap) ? (
+                  //   <div className={styles.lockedcovered} />
+                  // ) : (
+                  //   <div className={styles.covered} />
+                  // ))
+                  // <div className={styles.lockedcovered} />
+                  <div
+                    className={
+                      isgameover(newuserInput, newbombMap) ? styles.lockedcovered : styles.covered
+                    }
+                  />
+                )}
                 {boardnum === 1 &&
                   newbombMap[y][x] !== 1 &&
                   (countArroundBomb(y, x, directions, bombMap) === 0 ? (
