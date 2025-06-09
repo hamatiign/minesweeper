@@ -271,7 +271,7 @@ export default function Home() {
     evt: React.MouseEvent<HTMLDivElement>,
   ) => {
     evt.preventDefault();
-    if (isgameover(newuserInput, newbombMap)) return;
+    if (isclear(newuserInput, newbombMap) || isgameover(newuserInput, newbombMap)) return;
     // newuserInput[y][x] = 3;
     if (newuserInput[y][x] === 0) newuserInput[y][x] = 3;
     else if (newuserInput[y][x] === 3) newuserInput[y][x] = 2;
@@ -282,7 +282,8 @@ export default function Home() {
   };
 
   const clickHandler = (x: number, y: number) => {
-    if (isgameover(newuserInput, newbombMap)) return;
+    if (isclear(newuserInput, newbombMap) || isgameover(newuserInput, newbombMap)) return;
+
     //初チェック時の爆弾生成
     if (newuserInput.length === 1 && newuserInput[0].length === 1)
       newbombMap[0][0] = 1; //カスタムでの一マスのみの時用
@@ -411,27 +412,27 @@ export default function Home() {
 
       <div
         className={styles.backgroundboard}
-        style={{ width: boardlength[0] * 30 + 36, height: boardlength[1] * 30 + 16.5 * 3 + 70 }}
+        style={{ width: boardlength[0] * 30 + 38, height: boardlength[1] * 30 + 102 }}
       >
-        <div className={styles.optionbox} style={{ width: 30 * boardlength[0] }}>
+        <div className={styles.optionbox} style={{ width: 30 * boardlength[0] + 8 }}>
           {boardlength[0] >= 4 && (
             <div className={styles.leftbomb}>
               <div
                 className={styles.leftbombnum}
                 style={{
-                  backgroundPosition: -30 * leftbombnumleft - 4,
+                  backgroundPosition: -30 * leftbombnumleft - 5.7,
                 }}
               />
               <div
                 className={styles.leftbombnum}
                 style={{
-                  backgroundPosition: -30 * leftbombnumcenter - 4,
+                  backgroundPosition: -30 * leftbombnumcenter - 5.7,
                 }}
               />
               <div
                 className={styles.leftbombnum}
                 style={{
-                  backgroundPosition: -30 * leftbombnumright - 4,
+                  backgroundPosition: -30 * leftbombnumright - 5.7,
                 }}
               />
             </div>
@@ -451,12 +452,18 @@ export default function Home() {
           )}
           {boardlength[0] >= 9 && (
             <div className={styles.time}>
-              <div className={styles.timenum} style={{ backgroundPosition: -30 * timeleft - 4 }} />
               <div
                 className={styles.timenum}
-                style={{ backgroundPosition: -30 * timecenter - 4 }}
+                style={{ backgroundPosition: -30 * timeleft - 5.7 }}
               />
-              <div className={styles.timenum} style={{ backgroundPosition: -30 * timeright - 4 }} />
+              <div
+                className={styles.timenum}
+                style={{ backgroundPosition: -30 * timecenter - 5.7 }}
+              />
+              <div
+                className={styles.timenum}
+                style={{ backgroundPosition: -30 * timeright - 5.7 }}
+              />
             </div>
           )}
         </div>
