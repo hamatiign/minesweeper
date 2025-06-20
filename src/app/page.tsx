@@ -4,6 +4,20 @@ import { useEffect, useState } from 'react';
 
 import styles from './page.module.css';
 
+import { LeftBombNum } from '../components/leftbomb';
+import { ResetButtom } from '../components/resetbutton';
+import { directions } from '../constants';
+import {
+  change_clear_board,
+  countArroundBomb,
+  countleftbomb,
+  createZeroGrid,
+  do_empty_chain,
+  getRandomValue,
+  isclear,
+  isgameover,
+} from '../lib';
+
 // const calcTotal = (array: number[], counter: number) => {
 //   let ans: number = 0;
 //   for (let i = 0; i < array.length; i++) {
@@ -23,88 +37,10 @@ import styles from './page.module.css';
 //   return array;
 // };
 
-//二次元配列の生成
-function createZeroGrid(cols: number, rows: number): number[][] {
-  const grid = Array.from({ length: rows }, () => Array.from({ length: cols }, () => 0));
-  return grid;
-}
-
-//残りのボム数返す
-const countleftbomb = (board: number[][], bombnum: number) => {
-  return (
-    bombnum - board.reduce((totalbom, row) => totalbom + row.filter((tmp) => tmp === 3).length, 0)
-  );
-};
-
-//周囲のボム数えて返す
-const countArroundBomb = (y: number, x: number, directions: number[][], bombMap: number[][]) => {
-  let arroundBombNum = 0;
-  for (let i = 0; i < directions.length; i++) {
-    if (bombMap[y + directions[i][1]] === undefined) continue;
-    if (bombMap[y + directions[i][1]][x + directions[i][0]] === undefined) continue;
-    if (bombMap[y + directions[i][1]][x + directions[i][0]] === 1) arroundBombNum++;
-  }
-  return arroundBombNum;
-};
-
-//ボム生成用の乱数  添え字を返す
-const getRandomValue = (endnum: number) => {
-  return Math.floor(Math.random() * endnum);
-};
-
-//空白連鎖の再起関数  値を直接いじらないようにしたい
-const do_empty_chain = (
-  y: number,
-  x: number,
-  directions: number[][],
-  newbombMap: number[][],
-  userInput: number[][],
-) => {
-  if (userInput[y] === undefined) return;
-  if (userInput[y][x] === undefined) return;
-  if (userInput[y][x] === 1) return;
-  userInput[y][x] = 1;
-  if (countArroundBomb(y, x, directions, newbombMap) > 0) return;
-  for (let i = 0; i < 8; i++)
-    do_empty_chain(y + directions[i][1], x + directions[i][0], directions, newbombMap, userInput);
-};
-
-const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
-  for (let i = 0; i < newuserInput.length; i++)
-    for (let j = 0; j < newuserInput[0].length; j++)
-      if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
-};
-
-//クリア判定
-const isclear = (newuserInput: number[][], newbombMap: number[][]) => {
-  if (
-    newuserInput.reduce((total, row) => total + row.filter((tmp) => tmp !== 1).length, 0) ===
-    newbombMap.reduce((total, row) => total + row.filter((tmp) => tmp === 1).length, 0)
-  )
-    return true;
-  return false;
-};
-
-const change_clear_board = (newuserInput: number[][]) => {
-  for (let i = 0; i < newuserInput.length; i++)
-    for (let j = 0; j < newuserInput[0].length; j++) {
-      if (newuserInput[i][j] !== 1) newuserInput[i][j] = 3;
-    }
-};
-
 export default function Home() {
   const [bombnum, setbombnum] = useState(10);
   const [boardlength, setboardlength] = useState([9, 9]); //（横、縦）
-  const directions = [
-    [1, 1],
-    [1, 0],
-    [1, -1],
-    [0, 1],
-    [0, -1],
-    [-1, 1],
-    [-1, 0],
-    [-1, -1],
-  ];
+
   const [userInput, setuserInput] = useState([
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
     [0, 0, 0, 0, 0, 0, 0, 0, 0],
@@ -171,20 +107,19 @@ export default function Home() {
   const leftbombnumright = Math.floor(
     countleftbomb(board, bombnum) - (leftbombnumleft * 100 + leftbombnumcenter * 10),
   );
-  const time_thousandsplace = time >= 1000 ? 1 : 0;
-  const timeleft = time === -1 ? 0 : Math.floor((time - time_thousandsplace * 1000) / 100);
-  const timecenter = time === -1 ? 0 : Math.floor((time - timeleft * 100) / 10);
-  const timeright = time === -1 ? 0 : Math.floor(time - (timeleft * 100 + timecenter * 10));
-
-  //========================================~~~~~~~~~~~~~==
-
-  const reset = (newuserInput: number[][], newbombMap: number[][]) => {
+  const reset = () => {
     newuserInput.forEach((row) => row.fill(0));
     newbombMap.forEach((row) => row.fill(0));
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     settime(-1);
   };
+  const time_thousandsplace = time >= 1000 ? 1 : 0;
+  const timeleft = time === -1 ? 0 : Math.floor((time - time_thousandsplace * 1000) / 100);
+  const timecenter = time === -1 ? 0 : Math.floor((time - timeleft * 100) / 10);
+  const timeright = time === -1 ? 0 : Math.floor(time - (timeleft * 100 + timecenter * 10));
+
+  //========================================~~~~~~~~~~~~~==
 
   const updatecustomboard = () => {
     let numcustomboardwidth = customboardwidth === '' ? 1 : Number(customboardwidth);
@@ -219,33 +154,7 @@ export default function Home() {
     settime(-1);
     setcustom(true);
   };
-  // const checkthenNumber = (inputstr: string, min: number, max: number) => {
-  //   console.log('inputstr', inputstr);
-  //   if (inputstr === '') return min;
-  //   if (inputstr === '0') return min;
-  //   if (Number(inputstr) > max && max !== 0) return max;
-  //   else return Number(inputstr);
-  // };
 
-  // const updatecustomboard = () => {
-  //   if (customboardwidth < 1) setcustomboardwidth(1);
-  //   if (customboardheight < 1) setcustomboardheight(1);
-  //   if (custombombcount < 1) setcustombombcount(1);
-  //   if (customboardwidth > 100) setcustomboardwidth(100);
-  //   if (customboardheight > 100) setcustomboardheight(100);
-  //   if (custombombcount > customboardwidth * customboardheight - 1)
-  //     setcustombombcount(customboardwidth * customboardheight - 1);
-  //   if (custombombcount > customboardwidth * customboardheight - 1 && custombombcount === 1)
-  //     setcustombombcount(1);
-  //   changeboard(
-  //     customboardwidth,
-  //     customboardheight,
-  //     custombombcount,
-  //     createZeroGrid(customboardwidth, customboardheight),
-  //   );
-  //   settime(-1);
-  //   setcustom(true);
-  // };
   const custombottun = () => {
     changeboard(9, 9, 10, createZeroGrid(9, 9));
     settime(-1);
@@ -336,6 +245,9 @@ export default function Home() {
     if (isclear(newuserInput, newbombMap)) settime(1000 + time);
   };
   //=========================================================
+  const isClear = isclear(newuserInput, newbombMap);
+  const isGameover = isgameover(newuserInput, newbombMap);
+
   return (
     <div className={styles.container}>
       <div className={styles.levels}>
@@ -432,39 +344,34 @@ export default function Home() {
       >
         <div className={styles.optionbox} style={{ width: 30 * boardlength[0] + 8 }}>
           {boardlength[0] >= 4 && (
-            <div className={styles.leftbomb}>
-              <div
-                className={styles.leftbombnum}
-                style={{
-                  backgroundPosition: -30 * leftbombnumleft - 5.7,
-                }}
-              />
-              <div
-                className={styles.leftbombnum}
-                style={{
-                  backgroundPosition: -30 * leftbombnumcenter - 5.7,
-                }}
-              />
-              <div
-                className={styles.leftbombnum}
-                style={{
-                  backgroundPosition: -30 * leftbombnumright - 5.7,
-                }}
-              />
-            </div>
+            <LeftBombNum
+              leftbombnumleft={leftbombnumleft}
+              leftbombnumcenter={leftbombnumcenter}
+              leftbombnumright={leftbombnumright}
+            />
+            // <div className={styles.leftbomb}>
+            //   <div
+            //     className={styles.leftbombnum}
+            //     style={{
+            //       backgroundPosition: -30 * leftbombnumleft - 5.7,
+            //     }}
+            //   />
+            //   <div
+            //     className={styles.leftbombnum}
+            //     style={{
+            //       backgroundPosition: -30 * leftbombnumcenter - 5.7,
+            //     }}
+            //   />
+            //   <div
+            //     className={styles.leftbombnum}
+            //     style={{
+            //       backgroundPosition: -30 * leftbombnumright - 5.7,
+            //     }}
+            //   />
+            // </div>
           )}
           {boardlength[0] >= 6 && (
-            <div
-              onClick={() => reset(newuserInput, newbombMap)}
-              className={styles.faceicon}
-              style={{
-                backgroundPosition: isgameover(newuserInput, newbombMap)
-                  ? -390
-                  : isclear(newuserInput, newbombMap)
-                    ? -360
-                    : -330,
-              }}
-            />
+            <ResetButtom onReset={reset} isClear={isClear} isGameover={isGameover} />
           )}
           {boardlength[0] >= 9 && (
             <div className={styles.time}>
