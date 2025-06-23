@@ -4,38 +4,20 @@ import { useEffect, useState } from 'react';
 
 import styles from './page.module.css';
 
+import { EasyLevelButton } from '../components/easylevelbutton';
 import { LeftBombNum } from '../components/leftbomb';
 import { ResetButtom } from '../components/resetbutton';
 import { directions } from '../constants';
 import {
   change_clear_board,
+  checkClear,
+  checkGameover,
   countArroundBomb,
   countleftbomb,
   createZeroGrid,
   do_empty_chain,
   getRandomValue,
-  isclear,
-  isgameover,
 } from '../lib';
-
-// const calcTotal = (array: number[], counter: number) => {
-//   let ans: number = 0;
-//   for (let i = 0; i < array.length; i++) {
-//     ans += array[i];
-//   }
-//   return ans + counter;
-// };
-
-//数字の各桁を取り出す
-// const extract_digits = (num: number, length: number) => {
-//   const strnum = String(num);
-//   const array = [];
-//   for (let i = 0; i < strnum.length; i++) array.push(strnum[i]);
-//   while (array.length < length) {
-//     array.unshift(0);
-//   }
-//   return array;
-// };
 
 export default function Home() {
   const [bombnum, setbombnum] = useState(10);
@@ -92,14 +74,8 @@ export default function Home() {
     if (width === 30 && !iscustom) return 'hard';
     else return 'custom';
   };
-  if (isclear(newuserInput, newbombMap)) change_clear_board(newuserInput);
+  if (checkClear(newuserInput, newbombMap)) change_clear_board(newuserInput);
 
-  // const leftbombnumleft = extract_digits(countleftbomb(board, bombnum), 3)[0];
-  // const leftbombnumcenter = extract_digits(countleftbomb(board, bombnum), 3)[1];
-  // const leftbombnumright = extract_digits(countleftbomb(board, bombnum), 3)[2];
-  // const timeleft = extract_digits(time, 4)[1];
-  // const timecenter = extract_digits(time, 4)[2];
-  // const timeright = extract_digits(time, 4)[3];
   const leftbombnumleft = Math.floor(countleftbomb(board, bombnum) / 100);
   const leftbombnumcenter = Math.floor(
     (countleftbomb(board, bombnum) - leftbombnumleft * 100) / 10,
@@ -197,7 +173,7 @@ export default function Home() {
     evt: React.MouseEvent<HTMLDivElement>,
   ) => {
     evt.preventDefault();
-    if (isclear(newuserInput, newbombMap) || isgameover(newuserInput, newbombMap)) return;
+    if (checkClear(newuserInput, newbombMap) || checkGameover(newuserInput, newbombMap)) return;
     // newuserInput[y][x] = 3;
     if (newuserInput[y][x] === 0) newuserInput[y][x] = 3;
     else if (newuserInput[y][x] === 3) newuserInput[y][x] = 2;
@@ -208,7 +184,7 @@ export default function Home() {
   };
 
   const clickHandler = (x: number, y: number) => {
-    if (isclear(newuserInput, newbombMap) || isgameover(newuserInput, newbombMap)) return;
+    if (checkClear(newuserInput, newbombMap) || checkGameover(newuserInput, newbombMap)) return;
 
     //初チェック時の爆弾生成
     if (newuserInput.length === 1 && newuserInput[0].length === 1)
@@ -229,7 +205,7 @@ export default function Home() {
     userInput[y][x] = 1; //ボムを引いた時のユーザー入力を再起関数でいじれてないため
 
     //gameoverでboardに爆弾を適応
-    if (isgameover(newuserInput, newbombMap)) {
+    if (checkGameover(newuserInput, newbombMap)) {
       newuserInput.forEach((row, y) => {
         row.forEach((num, x) => {
           if (newbombMap[y][x] === 1) newuserInput[y][x] = 4;
@@ -241,17 +217,18 @@ export default function Home() {
     setuserInput(newuserInput);
     setbombMap(newbombMap);
     if (time === -1) settime(0);
-    if (isgameover(newuserInput, newbombMap)) settime(1000 + time);
-    if (isclear(newuserInput, newbombMap)) settime(1000 + time);
+    if (checkGameover(newuserInput, newbombMap)) settime(1000 + time);
+    if (checkClear(newuserInput, newbombMap)) settime(1000 + time);
   };
   //=========================================================
-  const isClear = isclear(newuserInput, newbombMap);
-  const isGameover = isgameover(newuserInput, newbombMap);
-
+  const isClear = checkClear(newuserInput, newbombMap);
+  const isGameover = checkGameover(newuserInput, newbombMap);
+  const levelstr = checkdlevelstr(newuserInput, iscustom);
   return (
     <div className={styles.container}>
       <div className={styles.levels}>
-        <div
+        <EasyLevelButton levelstr={levelstr} oneasylevelbutton={easylevelbottun} />
+        {/* <div
           className={
             checkdlevelstr(newuserInput, iscustom) === 'easy' ? styles.currentlevel : styles.level
           }
@@ -259,7 +236,7 @@ export default function Home() {
           onClick={() => easylevelbottun()}
         >
           初級
-        </div>
+        </div> */}
         <div
           className={
             checkdlevelstr(newuserInput, iscustom) === 'normal' ? styles.currentlevel : styles.level
@@ -349,26 +326,6 @@ export default function Home() {
               leftbombnumcenter={leftbombnumcenter}
               leftbombnumright={leftbombnumright}
             />
-            // <div className={styles.leftbomb}>
-            //   <div
-            //     className={styles.leftbombnum}
-            //     style={{
-            //       backgroundPosition: -30 * leftbombnumleft - 5.7,
-            //     }}
-            //   />
-            //   <div
-            //     className={styles.leftbombnum}
-            //     style={{
-            //       backgroundPosition: -30 * leftbombnumcenter - 5.7,
-            //     }}
-            //   />
-            //   <div
-            //     className={styles.leftbombnum}
-            //     style={{
-            //       backgroundPosition: -30 * leftbombnumright - 5.7,
-            //     }}
-            //   />
-            // </div>
           )}
           {boardlength[0] >= 6 && (
             <ResetButtom onReset={reset} isClear={isClear} isGameover={isGameover} />
@@ -413,7 +370,9 @@ export default function Home() {
                   // <div className={styles.lockedcovered} />
                   <div
                     className={
-                      isgameover(newuserInput, newbombMap) ? styles.lockedcovered : styles.covered
+                      checkGameover(newuserInput, newbombMap)
+                        ? styles.lockedcovered
+                        : styles.covered
                     }
                   />
                 )}

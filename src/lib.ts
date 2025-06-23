@@ -49,7 +49,7 @@ export const do_empty_chain = (
     do_empty_chain(y + directions[i][1], x + directions[i][0], directions, newbombMap, userInput);
 };
 
-export const isgameover = (newuserInput: number[][], newbombMap: number[][]) => {
+export const checkGameover = (newuserInput: number[][], newbombMap: number[][]): boolean => {
   for (let i = 0; i < newuserInput.length; i++)
     for (let j = 0; j < newuserInput[0].length; j++)
       if (newuserInput[i][j] === 1 && newbombMap[i][j] === 1) return true;
@@ -57,7 +57,7 @@ export const isgameover = (newuserInput: number[][], newbombMap: number[][]) => 
 };
 
 //クリア判定
-export const isclear = (newuserInput: number[][], newbombMap: number[][]) => {
+export const checkClear = (newuserInput: number[][], newbombMap: number[][]) => {
   if (
     newuserInput.reduce((total, row) => total + row.filter((tmp) => tmp !== 1).length, 0) ===
     newbombMap.reduce((total, row) => total + row.filter((tmp) => tmp === 1).length, 0)
