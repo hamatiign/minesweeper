@@ -6,6 +6,7 @@ import styles from './page.module.css';
 
 import { EasyLevelButton } from '../components/easylevelbutton';
 import { LeftBombNum } from '../components/leftbomb';
+import { NormalLevelButton } from '../components/normallevelbutton';
 import { ResetButtom } from '../components/resetbutton';
 import { directions } from '../constants';
 import {
@@ -228,29 +229,12 @@ export default function Home() {
     <div className={styles.container}>
       <div className={styles.levels}>
         <EasyLevelButton levelstr={levelstr} oneasylevelbutton={easylevelbottun} />
-        {/* <div
-          className={
-            checkdlevelstr(newuserInput, iscustom) === 'easy' ? styles.currentlevel : styles.level
-          }
-          id="easy"
-          onClick={() => easylevelbottun()}
-        >
-          初級
-        </div> */}
-        <div
-          className={
-            checkdlevelstr(newuserInput, iscustom) === 'normal' ? styles.currentlevel : styles.level
-          }
-          id="normal"
-          onClick={() => normallevelbottun()}
-        >
-          中級
-        </div>
+        <NormalLevelButton levelstr={levelstr} onNormalLevelButton={normallevelbottun} />
+
         <div
           className={
             checkdlevelstr(newuserInput, iscustom) === 'hard' ? styles.currentlevel : styles.level
           }
-          id="hard"
           onClick={() => hardlevelbottun()}
         >
           上級
@@ -259,7 +243,6 @@ export default function Home() {
           className={
             checkdlevelstr(newuserInput, iscustom) === 'custom' ? styles.currentlevel : styles.level
           }
-          id="custom"
           onClick={() => custombottun()}
         >
           カスタム
