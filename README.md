@@ -1,32 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+Minesweeper (マインスイーパー)
 
-## Getting Started
+<!-- 概要 -->
 
-First, run the development server:
+Windows XP版マインスイーパーを元とし、UI構成・状態管理・地雷検知ロジックの理解を深めるために制作しました。
+実装はReact/Next.jsとTypeScriptを用い、クラシックな操作感を再現することを目指しています。
 
-```bash
-npm run dev
-```
+こだわった点として、Reactの useState や useEffect といった基本的なフックを丁寧に利用し、コンポーネントの分割を意識することで、コードの可読性と保守性を高めました。また、GitHub Actionsを用いたCI/CDパイプラインを構築し、コード品質の維持とデプロイの自動化を実現しています。
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+<!-- こだわった点、工夫した点 -->
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+コンポーネント設計: 機能ごとにコンポーネントを適切に分割し、見通しの良いコードを心がけました。
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+状態管理: React Hooks (useState, useEffect) を用いて、ゲームの状態（盤面、タイマー、爆弾数など）を管理しています。
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+CI/CD: eslint や prettier によるコードチェックとフォーマット、 TypeScript の型チェック、そしてGitHub Pagesへの自動デプロイをGitHub Actionsで自動化しました。
 
-## Learn More
+<!-- 以下のリンクから実際にゲームをプレイできます。 -->
 
-To learn more about Next.js, take a look at the following resources:
+https://hamatiign.github.io/minesweeper/
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+<!-- 機能一覧-->
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+レベル選択機能: 初級・中級・上級から難易度を選択できます。
 
-## Deploy on Vercel
+カスタムモード: ボードの幅、高さ、爆弾の数を自由に設定してプレイできます。
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+タイマー機能: ゲーム開始からの経過時間を計測します。
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+残りの爆弾数表示: 盤面に設置した旗の数を考慮して、残りの爆弾数を表示します。
+
+ゲームオーバー/クリア判定: 全ての爆弾に旗を立てるか、爆弾のないセルをすべて開くとゲームクリアとなります。
+
+<!-- 使用技術 -->
+
+フロントエンド: React, Next.js, TypeScript
+
+コード品質: ESLint, Prettier, Stylelint
+
+CI/CD: GitHub Actions
+
+デプロイ: GitHub Pages
+
+<!-- 学んだこと -->
+
+コンポーネントの分割
+propsとstateの使い分け
+ユーザー操作に応じた状態変化の管理
+シンプルな再帰ロジックの実装
+
+<!-- 今後の改善点 -->
+
+UI演出の強化（アニメーションやフェードなど）
+難易度ごとの盤面生成ロジックの整理
+コードの可読性向上とリファクタリング
+
+<!-- メッセージ -->
+
+まだまだ勉強中ですが、少しずつ改善していきます。
+コードや設計についてアドバイスがあれば、ぜひ教えてください！
